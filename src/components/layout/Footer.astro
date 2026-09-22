@@ -1,0 +1,124 @@
+---
+import { site, hasAbn, hasLicence } from '../../data/site';
+
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: 'Services',
+    links: [
+      { label: 'Re-Roofing', href: '/services/re-roofing/' },
+      { label: 'New Roof Installation', href: '/services/new-roof-installation/' },
+      { label: 'Roof Repairs', href: '/services/roof-repairs/' },
+      { label: 'Guttering & Fascia', href: '/services/guttering-fascia/' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'Our Work', href: '/projects/' },
+      { label: 'About ENJ', href: '/about/' },
+      { label: 'Get a Quote', href: '/contact/' },
+    ],
+  },
+];
+---
+
+<footer class="bg-ink text-paper">
+  <div class="container-page py-section">
+    <div class="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-10">
+      <div>
+        <img
+          src="/brand/enj-logo.png"
+          alt={site.name}
+          width="1280"
+          height="569"
+          class="h-16 w-auto"
+          loading="lazy"
+        />
+        <p class="mt-6 max-w-[34ch] text-sm leading-relaxed" style="color:var(--color-muted-dark)">
+          {/* States only the confirmed base. Widen this once ENJ confirms the
+              travel radius — see the handoff notes. */}
+          Metal roofing based in {site.base.suburb}, {site.base.state}.
+        </p>
+        <a
+          href={site.social.instagram}
+          rel="me noopener"
+          target="_blank"
+          class="mt-5 inline-flex items-center gap-2.5 py-1.5 text-sm transition-colors duration-200 hover:text-rose"
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="17.6" cy="6.4" r="1.3" fill="currentColor"/>
+          </svg>
+          {site.social.instagramHandle}
+        </a>
+      </div>
+
+      {
+        columns.map((col) => (
+          <nav aria-label={col.title}>
+            <h2 class="label" style="color:var(--color-crimson)">{col.title}</h2>
+            <ul class="mt-4 space-y-1">
+              {col.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="inline-block py-1.5 text-sm transition-colors duration-200 hover:text-rose"
+                    style="color:var(--color-muted-dark)"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+
+      <div>
+        <h2 class="label" style="color:var(--color-crimson)">Contact</h2>
+        <ul class="mt-5 space-y-4">
+          {
+            site.contacts.map((c) => (
+              <li>
+                <a href={`tel:${c.phone}`} class="group block">
+                  <span class="label block" style="color:var(--color-muted-dark)">
+                    {c.name}
+                  </span>
+                  <span class="mt-1 block text-lg transition-colors duration-200 group-hover:text-rose" style="font-weight:600">
+                    {c.display}
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a
+              href={`mailto:${site.email}`}
+              class="inline-block break-all py-1.5 text-sm transition-colors duration-200 hover:text-rose"
+              style="color:var(--color-muted-dark)"
+            >
+              {site.email}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="rule rule-dark mt-16" />
+
+    <div class="mt-8 flex flex-col gap-4 text-2xs sm:flex-row sm:items-center sm:justify-between" style="color:var(--color-muted-dark)">
+      <p>&copy; {year} {site.name}. All rights reserved.</p>
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+        {/* Rendered only once ENJ supplies verified values. Never a placeholder. */}
+        {hasAbn && <span>ABN {site.abn}</span>}
+        {hasLicence && <span>{site.licence.authority} Licence {site.licence.number}</span>}
+        <a href="/privacy/" class="inline-block py-1.5 transition-colors duration-200 hover:text-rose">
+          Privacy
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,159 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/layout/PageHeader.astro';
+import AssetSlot from '../../components/media/AssetSlot.astro';
+import { serviceSchema, breadcrumbSchema } from '../../lib/seo/schema';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((service) => ({
+    params: { slug: service.id },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const { Content } = await render(service);
+const url = `/services/${service.id}/`;
+
+const schemas = [
+  serviceSchema({
+    name: service.data.title,
+    description: service.data.summary,
+    url,
+  }),
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Services', url: '/services/' },
+    { name: service.data.title, url },
+  ]),
+];
+---
+
+<Base
+  title={`${service.data.title} — ${site.base.suburb} NSW`}
+  description={service.data.summary}
+  {schemas}
+>
+  <PageHeader
+    eyebrow="Service"
+    title={service.data.title}
+    intro={service.data.summary}
+    trail={[{ label: 'Services', href: '/services/' }]}
+  />
+
+  <section class="bg-paper py-section">
+    <div class="container-page">
+      <div class="grid gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
+        {/* Prose column. Styles are applied here rather than via a plugin so
+            the type scale stays under the design system's control. */}
+        <div class="prose-enj max-w-prose">
+          <Content />
+        </div>
+
+        <aside class="lg:pt-2">
+          {
+            service.data.includes && service.data.includes.length > 0 && (
+              <div class="border-t border-line pt-6">
+                <h2 class="label" style="color:var(--color-red)">What it includes</h2>
+                <ul class="mt-5 space-y-3">
+                  {service.data.includes.map((item) => (
+                    <li class="flex gap-3 text-sm leading-relaxed">
+                      <span style="color:var(--color-red)" aria-hidden="true">—</span>
+                      <span style="color:var(--color-muted)">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          {
+            service.data.suitableFor && service.data.suitableFor.length > 0 && (
+              <div class="mt-10 border-t border-line pt-6">
+                <h2 class="label" style="color:var(--color-red)">Suitable for</h2>
+                <ul class="mt-5 space-y-3">
+                  {service.data.suitableFor.map((item) => (
+                    <li class="flex gap-3 text-sm leading-relaxed">
+                      <span style="color:var(--color-red)" aria-hidden="true">—</span>
+                      <span style="color:var(--color-muted)">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          <div class="mt-10 bg-ink p-7 text-paper">
+            <h2 class="display text-xl">Get a quote for this</h2>
+            <p class="mt-3 text-sm leading-relaxed" style="color:var(--color-muted-dark)">
+              Free, with no obligation.
+            </p>
+            <a
+              href="/contact/"
+              class="mt-6 block rounded-sm bg-cta px-6 py-4 text-center text-xs uppercase text-white transition-colors duration-200 hover:bg-red"
+              style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider)"
+            >
+              Get a free quote
+            </a>
+          </div>
+        </aside>
+      </div>
+
+      <div class="mt-16">
+        <AssetSlot
+          role="wide"
+          ratio="21/9"
+          tone="light"
+          brief={`A completed ${service.data.shortTitle ?? service.data.title} job. Wide shot, ideally showing the finished roof in its setting.`}
+        />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  /* Scoped to rendered markdown only. */
+  .prose-enj > * + * {
+    margin-top: 1.4em;
+  }
+  .prose-enj h2 {
+    margin-top: 2.6em;
+    font-size: var(--text-2xl);
+    font-stretch: 106%;
+    font-weight: 700;
+    letter-spacing: var(--tracking-tighter);
+    text-transform: uppercase;
+  }
+  .prose-enj h3 {
+    margin-top: 2em;
+    font-size: var(--text-lg);
+    font-weight: 700;
+  }
+  .prose-enj p,
+  .prose-enj li {
+    color: var(--color-muted);
+    line-height: var(--leading-relaxed);
+  }
+  .prose-enj ul {
+    margin-left: 0;
+    list-style: none;
+    padding-left: 0;
+  }
+  .prose-enj ul li {
+    position: relative;
+    padding-left: 1.4em;
+  }
+  .prose-enj ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--color-red);
+  }
+  .prose-enj strong {
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+</style>

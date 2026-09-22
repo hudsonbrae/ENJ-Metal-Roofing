@@ -1,0 +1,77 @@
+---
+/**
+ * A designed placeholder for photography ENJ has not yet supplied.
+ *
+ * Deliberately not a grey box. It states the exact shot required, so the
+ * build is complete and reviewable now, every gap is visible, and the
+ * component doubles as the photography brief. When a real image arrives
+ * it replaces the slot with no layout change.
+ */
+interface Props {
+  role: 'hero' | 'wide' | 'detail' | 'before' | 'during' | 'after' | 'portrait';
+  /** CSS aspect-ratio, e.g. '16/9' */
+  ratio?: string;
+  /** What the photograph needs to show */
+  brief: string;
+  tone?: 'dark' | 'light';
+  class?: string;
+}
+
+const {
+  role,
+  ratio = '16/9',
+  brief,
+  tone = 'dark',
+  class: className = '',
+} = Astro.props;
+
+const isDark = tone === 'dark';
+---
+
+<figure
+  class:list={[
+    'relative flex flex-col justify-between overflow-hidden',
+    // Ratio comes through a custom property so callers can override it
+    // responsively (e.g. `lg:aspect-auto` to fill a grid cell instead).
+    'aspect-[var(--slot-ratio)]',
+    isDark ? 'bg-ink-950 text-muted-dark' : 'bg-paper-2 text-muted',
+    className,
+  ]}
+  style={`--slot-ratio:${ratio}`}
+  aria-label={`Photography placeholder: ${brief}`}
+>
+  {/* Roofline motif, taken from the logo geometry. Structural, not decorative. */}
+  <svg
+    class="pointer-events-none absolute inset-0 h-full w-full"
+    style="opacity:.07"
+    viewBox="0 0 120 60"
+    preserveAspectRatio="xMidYMid slice"
+    aria-hidden="true"
+  >
+    <path
+      d="M-10 55 L20 18 L50 55 L80 18 L110 55 L140 18"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+    />
+  </svg>
+
+  <div class="relative flex items-start justify-between p-5 sm:p-6">
+    <span class="label" style="opacity:.75">{role}</span>
+    <span class="label" style="opacity:.45" aria-hidden="true">
+      {ratio.replace('/', ':')}
+    </span>
+  </div>
+
+  <figcaption class="relative max-w-[42ch] p-5 pt-0 sm:p-6 sm:pt-0">
+    {/* The accent must flip with the ground: crimson clears 4.5:1 on ink,
+        but only the darker red does on paper. */}
+    <span
+      class="label mb-2.5 block"
+      style={`color:var(--color-${isDark ? 'crimson' : 'red'})`}
+    >
+      Awaiting photography
+    </span>
+    <span class="block text-sm leading-snug">{brief}</span>
+  </figcaption>
+</figure>

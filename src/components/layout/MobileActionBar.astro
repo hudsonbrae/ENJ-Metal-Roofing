@@ -1,0 +1,56 @@
+﻿---
+import { primaryContact } from '../../data/site';
+---
+
+{/* Hidden until the hero has scrolled away, so it never competes with the
+    hero's own call to action. */}
+<div
+  data-actionbar
+  class="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-line-dark bg-ink/95 backdrop-blur-sm transition-transform duration-300 lg:hidden"
+  style="transition-timing-function:var(--ease-expo);padding-bottom:env(safe-area-inset-bottom)"
+>
+  <div class="grid grid-cols-2">
+    <a
+      href={`tel:${primaryContact.phone}`}
+      class="flex flex-col items-center justify-center gap-1 py-3.5"
+      style="color:var(--color-paper)"
+    >
+      <span class="label" style="color:var(--color-muted-dark)">
+        Call {primaryContact.name}
+      </span>
+      <span class="text-sm" style="font-weight:600">{primaryContact.display}</span>
+    </a>
+    <a
+      href="/contact/"
+      class="flex items-center justify-center bg-cta py-3.5 text-center text-xs uppercase text-white"
+      style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider)"
+    >
+      Free quote
+    </a>
+  </div>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-actionbar]');
+
+  if (bar) {
+    let queued = false;
+
+    const update = () => {
+      queued = false;
+      // Reveal once the first viewport — which always contains a CTA — is gone.
+      const past = window.scrollY > window.innerHeight * 0.6;
+      bar.classList.toggle('translate-y-full', !past);
+    };
+
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  }
+</script>

@@ -1,0 +1,230 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════
+   ENJ METAL ROOFING — DESIGN SYSTEM
+
+   Colour values sampled directly from the supplied logo artwork.
+   The brand "black" is #290B0D — a dark oxblood, not pure black.
+   Using it everywhere is what makes the site read as ENJ rather
+   than as generic dark UI.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* One file. wght 100–900 + wdth 62–125% drives the entire system:
+   expanded+heavy for display, normal for body, condensed for labels. */
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo-var.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* Tailwind's defaults are deleted, not extended. There is no slate-600,
+     no text-4xl, no rounded-lg. Only ENJ tokens exist. This is deliberate:
+     it makes drifting back toward a generic look impossible by accident. */
+  --color-*: initial;
+  --font-*: initial;
+  --text-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --tracking-*: initial;
+  --leading-*: initial;
+
+  /* ── Colour ─────────────────────────────────────────────────── */
+  --color-ink: #290b0d;
+  --color-ink-950: #180506;
+  --color-ink-900: #290b0d;
+  --color-ink-800: #3a1416;
+  --color-ink-700: #4e1e21;
+  --color-ink-600: #6b2e32;
+
+  /* The logo's crimson (#E24050) sits just under WCAG AA in both directions:
+     4.13:1 for white text on it, 4.43:1 for it as text on ink. Rather than
+     compromise one, the role is split — a darker fill for buttons, a slightly
+     brighter accent for text on dark grounds. Both now clear 4.5:1, and the
+     pair still reads as the logo's red. */
+  --color-red: #942531; /* accent on light grounds — 7.8:1 on paper */
+  --color-crimson: #e5485a; /* accent TEXT on ink — 4.71:1 */
+  --color-cta: #d63347; /* button FILL with white text — 4.75:1 */
+  --color-rose: #de6f7e; /* hover / hairlines on ink — 5.8:1 */
+
+  --color-paper: #faf9f7;
+  --color-paper-2: #f2f0ec;
+  --color-line: #e2ded8;
+  --color-line-dark: #452023;
+
+  --color-muted: #5f5854;
+  --color-muted-dark: #b9ada9;
+
+  --color-white: #ffffff;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* ── Type scale (fluid, 360px → 1440px) ─────────────────────── */
+  --text-micro: 0.6875rem;
+  --text-2xs: 0.75rem;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-base: clamp(1rem, 0.979rem + 0.09vw, 1.0625rem);
+  --text-lg: clamp(1.0625rem, 1rem + 0.28vw, 1.25rem);
+  --text-xl: clamp(1.1875rem, 1.083rem + 0.46vw, 1.5rem);
+  --text-2xl: clamp(1.375rem, 1.167rem + 0.93vw, 2rem);
+  --text-3xl: clamp(1.625rem, 1.25rem + 1.67vw, 2.75rem);
+  --text-4xl: clamp(2rem, 1.333rem + 2.96vw, 4rem);
+  --text-5xl: clamp(2.5rem, 1.5rem + 4.44vw, 5.5rem);
+  --text-6xl: clamp(3.25rem, 1.833rem + 6.3vw, 7.5rem);
+
+  --font-sans: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --tracking-tightest: -0.045em;
+  --tracking-tighter: -0.028em;
+  --tracking-tight: -0.015em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.08em;
+  --tracking-wider: 0.14em;
+  --tracking-widest: 0.2em;
+
+  --leading-none: 0.92;
+  --leading-tight: 1.05;
+  --leading-snug: 1.22;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.66;
+
+  /* ── Rhythm ─────────────────────────────────────────────────── */
+  --spacing-gutter: clamp(1.25rem, 5vw, 4rem);
+  --spacing-section: clamp(4.5rem, 2.5rem + 9vw, 10rem);
+  --spacing-section-lg: clamp(6rem, 3rem + 12vw, 13rem);
+
+  --container-page: 90rem;
+  --container-wide: 78rem;
+  --container-prose: 38rem;
+
+  /* ── Edges & depth (architectural = sharp) ──────────────────── */
+  --radius-sm: 2px;
+  --shadow-lift: 0 1px 2px rgb(24 5 6 / 0.06), 0 12px 32px -12px rgb(24 5 6 / 0.18);
+
+  /* ── Motion ─────────────────────────────────────────────────── */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    font-stretch: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    margin: 0;
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tighter);
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  img, picture, svg, video {
+    display: block;
+    max-width: 100%;
+  }
+
+  a {
+    color: inherit;
+    text-underline-offset: 0.22em;
+  }
+
+  /* Visible, branded focus. Never removed — only restyled. */
+  :focus-visible {
+    outline: 2px solid var(--color-crimson);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background-color: var(--color-cta);
+    color: var(--color-white);
+  }
+
+  /* Motion is decoration. If it isn't wanted, it doesn't run. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ── Display type ────────────────────────────────────────────
+     Expanded width + heavy weight. This is the single strongest
+     brand signal on the site and the reason Archivo was chosen
+     over a default grotesque. */
+  .display {
+    font-stretch: 112%;
+    font-weight: 800;
+    line-height: var(--leading-none);
+    letter-spacing: var(--tracking-tightest);
+    text-transform: uppercase;
+  }
+
+  /* ── Technical annotation ────────────────────────────────────
+     Condensed + heavily letterspaced, the way labels read on an
+     architectural drawing set. Used for section indices and
+     eyebrows — never for anything longer than a few words. */
+  .label {
+    font-stretch: 88%;
+    font-size: var(--text-micro);
+    font-weight: 600;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .container-page {
+    width: 100%;
+    max-width: var(--container-page);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  /* Hairline rule — the connective tissue between sections. */
+  .rule {
+    border: 0;
+    border-top: 1px solid var(--color-line);
+    margin: 0;
+  }
+  .rule-dark {
+    border-top-color: var(--color-line-dark);
+  }
+}

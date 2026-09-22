@@ -1,0 +1,51 @@
+HOW TO ADD A PROJECT
+════════════════════
+
+1. Create a folder:   src/content/projects/<slug>/
+2. Put the photos in that same folder.
+3. Create index.md inside it, using the shape below.
+
+The URL becomes /projects/<slug>/ automatically. The project appears in the
+work index, the sitemap and the structured data with no other changes.
+
+ONLY FILL IN WHAT IS ACTUALLY KNOWN. Every field below except title, status,
+type and images is optional, and anything omitted simply does not render.
+Do not invent a suburb, year, colour or scope to fill a gap — a project page
+with fewer facts looks deliberate; a wrong fact damages trust.
+
+─────────────────────────────────────────────────────────────────────────────
+
+---
+title: Mollymook Beach Re-Roof
+status: complete              # complete | in-progress
+type: re-roof                 # re-roof | new-construction | repair |
+                              # gutters-fascia | other
+featured: true                # show on the homepage work index
+order: 1                      # lower numbers sort first
+
+# ── Everything below is optional — delete any line you cannot verify ──
+suburb: Mollymook
+state: NSW
+year: 2026
+roofProfile: Trimdek
+material: COLORBOND steel
+colour: Surfmist
+scope:
+  - Removal of existing tile roof
+  - New sarking and insulation
+  - New gutters and downpipes
+summary: >
+  Two sentences, factual, describing what the job involved.
+  No superlatives, no claims about satisfaction or speed.
+
+images:
+  - src: ./hero.jpg
+    alt: Completed Trimdek roof in Surfmist viewed from the street
+    role: hero                # hero | wide | detail | before | during | after
+  - src: ./seam-detail.jpg
+    alt: Close view of ridge capping and sheet ends
+    role: detail
+    caption: Ridge capping and sheet ends
+---
+
+Optional longer description in markdown goes here. It is not required.

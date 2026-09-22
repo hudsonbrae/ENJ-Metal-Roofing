@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/layout/PageHeader.astro';
+import { breadcrumbSchema } from '../../lib/seo/schema';
+import { site } from '../../data/site';
+
+const services = (await getCollection('services')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Services', url: '/services/' },
+  ]),
+];
+---
+
+<Base
+  title="Metal Roofing Services — Re-Roofing, Repairs, Guttering"
+  description={`Metal roofing services from ${site.base.suburb} NSW: re-roofing and roof replacement, new roof installation, repairs and maintenance, guttering and fascia.`}
+  {schemas}
+>
+  <PageHeader
+    eyebrow="Services"
+    title="What we do"
+    intro="Metal roofing work across residential re-roofing, new builds, repairs and rainwater goods."
+  />
+
+  <section class="bg-paper py-section">
+    <div class="container-page">
+      <ul>
+        {
+          services.map((service, i) => (
+            <li class="border-b border-line first:border-t">
+              <a href={`/services/${service.id}/`} class="group block py-9">
+                <div class="grid gap-4 lg:grid-cols-[4rem_1fr_1.1fr] lg:gap-8">
+                  <span class="label pt-2" style="color:var(--color-red)">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <h2 class="display text-2xl transition-colors duration-200 group-hover:text-red lg:text-3xl">
+                    {service.data.title}
+                  </h2>
+                  <div>
+                    <p class="leading-relaxed" style="color:var(--color-muted)">
+                      {service.data.summary}
+                    </p>
+                    <span
+                      class="label mt-5 inline-block transition-colors duration-200 group-hover:text-red"
+                      style="color:var(--color-muted)"
+                    >
+                      Read more →
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>

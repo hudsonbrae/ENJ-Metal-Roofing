@@ -1,0 +1,121 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/layout/PageHeader.astro';
+import AssetSlot from '../../components/media/AssetSlot.astro';
+import { breadcrumbSchema } from '../../lib/seo/schema';
+import { site } from '../../data/site';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Work', url: '/projects/' },
+  ]),
+];
+---
+
+<Base
+  title="Our Work — Metal Roofing Projects"
+  description={`Completed metal roofing projects by ENJ Metal Roofing, based in ${site.base.suburb} NSW.`}
+  {schemas}
+>
+  <PageHeader
+    eyebrow="Projects"
+    title="Our work"
+    intro="Completed roofs, shown in detail rather than summarised."
+    trail={[{ label: 'Work', href: '/projects/' }]}
+  />
+
+  <section class="bg-paper py-section">
+    <div class="container-page">
+      {
+        projects.length > 0 ? (
+          <ul class="grid gap-x-6 gap-y-14 md:grid-cols-2">
+            {projects.map((project) => {
+              const hero =
+                project.data.images.find((img) => img.role === 'hero') ??
+                project.data.images[0];
+              return (
+                <li>
+                  <a href={`/projects/${project.id}/`} class="group block">
+                    {hero ? (
+                      <img
+                        src={hero.src.src}
+                        alt={hero.alt}
+                        width={hero.src.width}
+                        height={hero.src.height}
+                        class="w-full object-cover"
+                        style="aspect-ratio:4/3"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <AssetSlot
+                        role="hero"
+                        ratio="4/3"
+                        brief="Hero photograph for this project."
+                      />
+                    )}
+                    <h2 class="display mt-6 text-2xl transition-colors duration-200 group-hover:text-red">
+                      {project.data.title}
+                    </h2>
+                    <div class="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+                      {project.data.suburb && (
+                        <span class="label" style="color:var(--color-muted)">
+                          {project.data.suburb}
+                        </span>
+                      )}
+                      {project.data.roofProfile && (
+                        <span class="label" style="color:var(--color-muted)">
+                          {project.data.roofProfile}
+                        </span>
+                      )}
+                      {project.data.year && (
+                        <span class="label" style="color:var(--color-muted)">
+                          {project.data.year}
+                        </span>
+                      )}
+                    </div>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <div>
+            <div class="max-w-[58ch]">
+              <h2 class="display text-2xl lg:text-3xl">Project photography is being collected</h2>
+              <p class="mt-5 text-lg leading-relaxed" style="color:var(--color-muted)">
+                Rather than filling this page with stock imagery, it stays empty
+                until ENJ's own completed work is photographed. Each project will
+                be shown with the detail that actually demonstrates the
+                workmanship.
+              </p>
+              <p class="mt-5 leading-relaxed" style="color:var(--color-muted)">
+                In the meantime, recent jobs are posted on{' '}
+                <a
+                  href={site.social.instagram}
+                  target="_blank"
+                  rel="me noopener"
+                  style="color:var(--color-red)"
+                  class="underline"
+                >
+                  {site.social.instagramHandle}
+                </a>.
+              </p>
+            </div>
+
+            <div class="mt-12 grid gap-5 md:grid-cols-3">
+              <AssetSlot role="hero" ratio="4/3" brief="Completed roof, wide shot with the house in context." />
+              <AssetSlot role="detail" ratio="4/3" brief="Macro detail showing ridge, valley or flashing work." />
+              <AssetSlot role="before" ratio="4/3" brief="Before-and-after pair from a single job." />
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>

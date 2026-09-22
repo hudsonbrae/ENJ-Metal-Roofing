@@ -1,0 +1,56 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+  /** Breadcrumb trail, excluding Home */
+  trail?: { label: string; href: string }[];
+}
+
+const { eyebrow, title, intro, trail = [] } = Astro.props;
+---
+
+<section class="border-b border-line-dark bg-ink pb-section pt-14 text-paper sm:pt-20">
+  <div class="container-page">
+    {
+      trail.length > 0 && (
+        <nav aria-label="Breadcrumb" class="mb-10">
+          <ol class="flex flex-wrap items-center gap-2">
+            <li class="label" style="color:var(--color-muted-dark)">
+              {/* .label sets line-height:1 at 11px, so it needs py-2 to
+                  clear the 24px minimum target size. */}
+              <a href="/" class="inline-block py-2 transition-colors duration-200 hover:text-rose">
+                Home
+              </a>
+            </li>
+            {trail.map((crumb) => (
+              <>
+                <li class="label" style="color:var(--color-muted-dark);opacity:.5" aria-hidden="true">
+                  /
+                </li>
+                <li class="label" style="color:var(--color-muted-dark)">
+                  <a
+                    href={crumb.href}
+                    class="inline-block py-2 transition-colors duration-200 hover:text-rose"
+                  >
+                    {crumb.label}
+                  </a>
+                </li>
+              </>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+
+    <p class="label" style="color:var(--color-crimson)">{eyebrow}</p>
+    <h1 class="display mt-7 max-w-[16ch] text-4xl lg:text-5xl">{title}</h1>
+    {
+      intro && (
+        <p class="mt-8 max-w-[56ch] text-lg leading-relaxed" style="color:var(--color-muted-dark)">
+          {intro}
+        </p>
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,61 @@
+﻿---
+import '../styles/global.css';
+import Seo from '../components/Seo.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import MobileActionBar from '../components/layout/MobileActionBar.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  schemas?: unknown[];
+}
+
+const { title, description, image, noindex, schemas } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    {/* Single variable font carries the whole system — preloaded to avoid
+        a late swap on the hero headline. */}
+    <link
+      rel="preload"
+      href="/fonts/archivo-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <link rel="icon" href="/brand/favicon-512.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <meta name="theme-color" content="#290B0D" />
+
+    <Seo {title} {description} {image} {noindex} {schemas} />
+  </head>
+
+  <body class="pb-[68px] lg:pb-0">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-sm focus:bg-cta focus:px-5 focus:py-3 focus:text-xs focus:uppercase focus:text-white"
+      style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider)"
+    >
+      Skip to content
+    </a>
+
+    <Header />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+    <MobileActionBar />
+  </body>
+</html>
