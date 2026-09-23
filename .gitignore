@@ -1,5 +1,10 @@
 # build output
 dist/
+
+# QA output
+qa-screenshots/
+test-results/
+playwright-report/
 # generated types
 .astro/
 
