@@ -1,13 +1,13 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
+import Button from '../../components/primitives/Button.astro';
+import { getServices } from '../../lib/content';
 import { breadcrumbSchema } from '../../lib/seo/schema';
 import { site } from '../../data/site';
+import { quoteHref } from '../../data/navigation';
 
-const services = (await getCollection('services')).sort(
-  (a, b) => a.data.order - b.data.order,
-);
+const services = await getServices();
 
 const schemas = [
   breadcrumbSchema([
@@ -18,47 +18,70 @@ const schemas = [
 ---
 
 <Base
-  title="Metal Roofing Services — Re-Roofing, Repairs, Guttering"
-  description={`Metal roofing services from ${site.base.suburb} NSW: re-roofing and roof replacement, new roof installation, repairs and maintenance, guttering and fascia.`}
+  title="Metal Roofing Services"
+  description={`Metal roofing services from ENJ Metal Roofing in ${site.base.suburb}, NSW: roof replacement, new roofs, repairs and guttering.`}
   {schemas}
 >
   <PageHeader
-    eyebrow="Services"
-    title="What we do"
-    intro="Metal roofing work across residential re-roofing, new builds, repairs and rainwater goods."
+    tone="paper"
+    title="Services"
+    intro="Metal roofing work on homes and outbuildings, from replacing a whole roof to fixing a leak."
+    trail={[{ label: 'Services', href: '/services/' }]}
   />
 
-  <section class="bg-paper py-section">
+  <section class="bg-paper py-(--spacing-section)">
     <div class="container-page">
-      <ul>
-        {
-          services.map((service, i) => (
-            <li class="border-b border-line first:border-t">
-              <a href={`/services/${service.id}/`} class="group block py-9">
-                <div class="grid gap-4 lg:grid-cols-[4rem_1fr_1.1fr] lg:gap-8">
-                  <span class="label pt-2" style="color:var(--color-red)">
-                    {String(i + 1).padStart(2, '0')}
+      {
+        services.length > 0 ? (
+          <ol class="grid gap-x-10 gap-y-16 md:grid-cols-2">
+            {services.map((service, i) => (
+              <li class="reveal border-t-2 border-ink pt-6" style={`--d:${i % 2}`}>
+                <a href={`/services/${service.id}/`} class="group block">
+                  <span class="label tabular text-red">{String(i + 1).padStart(2, '0')}</span>
+                  <h2 class="t-title mt-4 text-3xl transition-colors group-hover:text-red">{service.data.title}</h2>
+                  <p class="mt-4 max-w-[48ch] text-muted">{service.data.summary}</p>
+                  {service.data.includes.length > 0 && (
+                    <ul class="mt-6 space-y-2 text-sm">
+                      {service.data.includes.slice(0, 3).map((item) => (
+                        <li class="flex gap-3">
+                          <span class="mt-2.5 h-px w-3 shrink-0 bg-red" aria-hidden="true" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <span class="label link mt-7 inline-block py-2 text-red">
+                    More about {(service.data.shortTitle ?? service.data.title).toLowerCase()}
                   </span>
-                  <h2 class="display text-2xl transition-colors duration-200 group-hover:text-red lg:text-3xl">
-                    {service.data.title}
-                  </h2>
-                  <div>
-                    <p class="leading-relaxed" style="color:var(--color-muted)">
-                      {service.data.summary}
-                    </p>
-                    <span
-                      class="label mt-5 inline-block transition-colors duration-200 group-hover:text-red"
-                      style="color:var(--color-muted)"
-                    >
-                      Read more →
+                  {service.data.draft && (
+                    <span data-review-only class="label mt-3 block text-red">
+                      Draft: awaiting ENJ confirmation
                     </span>
-                  </div>
-                </div>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <div class="max-w-[52ch]">
+            <h2 class="t-headline text-3xl">Service details are being finalised</h2>
+            <p class="t-lead mt-6 text-muted">Call or send the details of the job, and ENJ will let you know how they can help.</p>
+            <Button href={quoteHref} class="mt-10">Get a free quote</Button>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="bg-ink py-(--spacing-section) text-paper">
+    <div class="container-page flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h2 class="t-headline max-w-[16ch] text-4xl">Not sure which you need?</h2>
+        <p class="t-lead mt-6 max-w-[44ch] text-muted-dark">
+          Describe what you have noticed and where the property is. Quotes are free.
+        </p>
+      </div>
+      <Button href={quoteHref} size="lg">Get a free quote</Button>
     </div>
   </section>
 </Base>

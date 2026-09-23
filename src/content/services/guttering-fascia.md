@@ -1,33 +1,32 @@
 ---
-title: Guttering, Fascia & Downpipes
-shortTitle: Guttering
-summary: Replacement and installation of gutters, fascia covers, downpipes and rainwater goods, matched to the roof and the catchment.
+# DRAFT: awaiting ENJ confirmation that this service is offered and the
+# description is accurate. Set draft: false once confirmed.
+title: Gutters, fascia and downpipes
+shortTitle: Gutters
+summary: Replacing and installing gutters, fascia, downpipes and rainwater goods to suit the roof they drain.
 includes:
-  - Gutter removal and replacement
-  - Fascia repair and metal fascia covers
+  - Removing and replacing gutters
+  - Fascia repairs and metal fascia covers
   - Downpipes and stormwater connection
-  - Gutter guard and leaf protection
-  - Rainhead and overflow provision
+  - Gutter guard
+  - Rainheads and overflow
 suitableFor:
   - Rusted, sagging or overflowing gutters
   - Homes near trees with recurring blockages
   - Properties collecting rainwater for tanks
-  - Gutter replacement alongside a re-roof
+  - Gutter replacement alongside a new roof
 order: 4
 draft: true
 ---
 
-Gutters are sized to the roof area they drain and the rainfall intensity of
-the location. An undersized gutter will overflow in heavy rain regardless of
-how well it is installed, which is why gutter replacement is usually worth
-doing at the same time as a re-roof.
+Gutters are sized to the roof area they drain and the rainfall they need to handle. An undersized
+gutter overflows in heavy rain however well it is installed, which is why gutters are usually
+worth replacing at the same time as the roof.
 
-## Coastal and bushfire considerations
+## Coast and bushfire
 
-On bushfire-prone land, gutter guard serves a second purpose beyond keeping
-leaves out: AS 3959 addresses the accumulation of debris that can be ignited
-by embers. The material the guard is made from matters in that context.
+On bushfire-prone land, gutter guard does more than keep leaves out: it reduces the build-up of
+dry debris that embers can ignite, so the material it is made from matters.
 
-Near the coast, the same salt exposure that affects roof sheeting affects
-gutters and downpipes — and gutters hold water and debris, so they often
-show corrosion before the roof does.
+Near the sea, the salt that affects roof sheeting affects gutters and downpipes too. Gutters hold
+water and debris, so they often show corrosion before the roof does.

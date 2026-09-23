@@ -1,39 +1,24 @@
-﻿---
+---
 import Base from '../layouts/Base.astro';
-import { site, primaryContact } from '../data/site';
+import Button from '../components/primitives/Button.astro';
+import { primaryContact } from '../data/site';
 ---
 
-<Base
-  title="Page not found"
-  description="That page does not exist."
-  noindex={true}
->
-  <section class="bg-ink py-section-lg text-paper">
+<Base title="Page not found" description="That page does not exist on the ENJ Metal Roofing website." noindex>
+  <section class="bg-ink py-(--spacing-section-lg) text-paper">
     <div class="container-page">
-      <p class="label" style="color:var(--color-crimson)">Error 404</p>
-      <h1 class="display mt-7 max-w-[14ch] text-4xl lg:text-5xl">
-        That page isn't here
-      </h1>
-      <p class="mt-8 max-w-[46ch] text-lg leading-relaxed" style="color:var(--color-muted-dark)">
-        The link may be out of date. Everything on the site is reachable from
-        the menu, or call {primaryContact.name} directly.
+      <p class="label text-crimson">Page not found</p>
+      <h1 class="t-display mt-7 max-w-[14ch] text-5xl">That page isn't here</h1>
+      <p class="t-lead mt-7 max-w-[46ch] text-muted-dark">
+        The link may be out of date. Everything on the site is reachable from the menu, or you can call
+        {' '}{primaryContact.name} directly.
       </p>
-
       <div class="mt-10 flex flex-col gap-3 sm:flex-row">
-        <a
-          href="/"
-          class="whitespace-nowrap rounded-sm bg-cta px-8 py-4.5 text-center text-xs uppercase text-white transition-colors duration-200 hover:bg-red"
-          style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider)"
-        >
-          Back to home
-        </a>
-        <a
-          href={`tel:${primaryContact.phone}`}
-          class="whitespace-nowrap rounded-sm border border-rose/35 px-8 py-4.5 text-center text-xs uppercase transition-colors duration-200 hover:bg-paper hover:text-ink"
-          style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider)"
-        >
-          Call {primaryContact.name} — {primaryContact.display}
-        </a>
+        <Button href="/">Back to home</Button>
+        <Button href={`tel:${primaryContact.phone}`} variant="secondary-dark">
+          <span>Call {primaryContact.name}</span>
+          <span class="tabular font-normal opacity-80">{primaryContact.display}</span>
+        </Button>
       </div>
     </div>
   </section>

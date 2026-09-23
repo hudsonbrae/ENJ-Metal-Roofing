@@ -1,0 +1,132 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/layout/PageHeader.astro';
+import Button from '../../components/primitives/Button.astro';
+import Photo from '../../components/media/Photo.astro';
+import AssetSlot from '../../components/media/AssetSlot.astro';
+import ProjectCard from '../../components/projects/ProjectCard.astro';
+import CallList from '../../components/contact/CallList.astro';
+import { getProjects, getServices } from '../../lib/content';
+import { breadcrumbSchema, serviceSchema } from '../../lib/seo/schema';
+import { site } from '../../data/site';
+import { quoteHref } from '../../data/navigation';
+
+export async function getStaticPaths() {
+  const services = await getServices();
+  return services.map((service) => ({ params: { slug: service.id }, props: { service } }));
+}
+
+const { service } = Astro.props;
+const { data } = service;
+const { Content } = await render(service);
+const url = `/services/${service.id}/`;
+
+const related = (await getProjects()).filter((project) => project.data.service?.id === service.id);
+
+const schemas = [
+  serviceSchema({ name: data.title, description: data.summary, url }),
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Services', url: '/services/' },
+    { name: data.title, url },
+  ]),
+];
+---
+
+<Base title={data.shortTitle ?? data.title} description={data.summary} {schemas}>
+  <PageHeader title={data.title} intro={data.summary} trail={[{ label: 'Services', href: '/services/' }, { label: data.shortTitle ?? data.title, href: url }]}>
+    {
+      data.draft && (
+        <p data-review-only class="label mt-8 inline-block border border-crimson/60 px-3 py-2 text-crimson">
+          Draft: awaiting ENJ confirmation that this service is offered
+        </p>
+      )
+    }
+    <div slot="aside" class="flex flex-col gap-5">
+      <Button href={quoteHref} size="lg" block>Get a free quote</Button>
+      <CallList />
+    </div>
+  </PageHeader>
+
+  <div class="bg-paper">
+    <div class="container-page pt-6 sm:pt-8">
+      {
+        data.image ? (
+          <Photo src={data.image.src} alt={data.image.alt} use="full" ratio="21/9" priority />
+        ) : (
+          <AssetSlot
+            role="Service"
+            ratio="21/9"
+            tone="light"
+            brief={`A completed ${(data.shortTitle ?? data.title).toLowerCase()} job, wide, showing the finished roof in its setting.`}
+          />
+        )
+      }
+    </div>
+  </div>
+
+  <section class="bg-paper py-(--spacing-section)">
+    <div class="container-page grid gap-16 lg:grid-cols-12 lg:gap-8">
+      <div class="prose-enj max-w-prose lg:col-span-7">
+        <Content />
+      </div>
+
+      <aside class="space-y-12 lg:col-span-4 lg:col-start-9">
+        {
+          data.includes.length > 0 && (
+            <div>
+              <h2 class="t-title text-xl">What it includes</h2>
+              <ul class="mt-5 divide-y divide-line border-y border-line">
+                {data.includes.map((item) => (
+                  <li class="py-3 text-sm">{item}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+        {
+          data.suitableFor.length > 0 && (
+            <div>
+              <h2 class="t-title text-xl">Suited to</h2>
+              <ul class="mt-5 divide-y divide-line border-y border-line">
+                {data.suitableFor.map((item) => (
+                  <li class="py-3 text-sm">{item}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+
+  {
+    related.length > 0 && (
+      <section class="border-t border-line bg-paper py-(--spacing-section)">
+        <div class="container-page">
+          <h2 class="t-headline text-4xl">{data.shortTitle ?? data.title} work</h2>
+          <ul class="mt-12 grid gap-x-6 gap-y-14 md:grid-cols-2 lg:gap-x-8">
+            {related.map((project) => (
+              <li>
+                <ProjectCard project={project} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="bg-ink py-(--spacing-section) text-paper">
+    <div class="container-page flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h2 class="t-headline max-w-[16ch] text-4xl">Get a quote for this work</h2>
+        <p class="t-lead mt-6 max-w-[44ch] text-muted-dark">
+          Based in {site.base.suburb}. Quotes are free.
+        </p>
+      </div>
+      <Button href={quoteHref} size="lg">Get a free quote</Button>
+    </div>
+  </section>
+</Base>

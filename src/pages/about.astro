@@ -1,9 +1,15 @@
-﻿---
+---
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/layout/PageHeader.astro';
+import Button from '../components/primitives/Button.astro';
 import AssetSlot from '../components/media/AssetSlot.astro';
+import CallList from '../components/contact/CallList.astro';
+import Awaiting from '../components/review/Awaiting.astro';
 import { breadcrumbSchema } from '../lib/seo/schema';
 import { site, hasLicence, hasAbn } from '../data/site';
+import { quoteHref } from '../data/navigation';
+
+const names = site.contacts.map((c) => c.name).join(' or ');
 
 const schemas = [
   breadcrumbSchema([
@@ -14,119 +20,91 @@ const schemas = [
 ---
 
 <Base
-  title="About ENJ Metal Roofing — Ulladulla NSW"
-  description={`ENJ Metal Roofing is a metal roofing business based in ${site.base.suburb}, NSW. Contact John or Ethan for a free quote.`}
+  title="About ENJ"
+  description={`ENJ Metal Roofing is a metal roofing business based in ${site.base.suburb}, NSW. Talk directly to John or Ethan about your roof.`}
   {schemas}
 >
   <PageHeader
-    eyebrow="About"
-    title="ENJ Metal Roofing"
-    intro={`A metal roofing business based in ${site.base.suburb}, on the New South Wales South Coast.`}
+    tone="paper"
+    title="About ENJ"
+    intro={`A metal roofing business based in ${site.base.suburb}, on the New South Wales South Coast. You'll deal directly with ${names}.`}
     trail={[{ label: 'About', href: '/about/' }]}
   />
 
-  <section class="bg-paper py-section">
-    <div class="container-page">
-      <div class="grid gap-14 lg:grid-cols-[1.3fr_1fr] lg:gap-20">
-        <div class="max-w-prose">
-          <h2 class="display text-2xl lg:text-3xl">How we work</h2>
-          <p class="mt-6 text-lg leading-relaxed" style="color:var(--color-muted)">
-            ENJ is a new business. Rather than list years in the trade we have
-            not yet accumulated, the work is put in front of you directly —
-            photographed closely enough that you can judge the standard of it
-            yourself.
-          </p>
-          <p class="mt-5 leading-relaxed" style="color:var(--color-muted)">
-            The approach is straightforward. Look at the roof before quoting,
-            specify materials for the conditions the roof will actually face,
-            and put the quote in writing so there are no surprises later.
-          </p>
+  <section class="bg-paper py-(--spacing-section)">
+    <div class="container-page grid gap-16 lg:grid-cols-12 lg:gap-8">
+      <div class="lg:col-span-5">
+        <div class="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
+          <AssetSlot
+            role="Team"
+            ratio="4/5"
+            brief="John and Ethan on site in work gear, with a roof behind them. A real photograph: no stock images, no AI-generated people."
+          />
+        </div>
+      </div>
 
-          <h2 class="display mt-14 text-2xl lg:text-3xl">Why metal</h2>
-          <p class="mt-6 leading-relaxed" style="color:var(--color-muted)">
-            Metal roofing suits this part of the coast. It is light enough to go
-            over most existing structures, it sheds water at low pitches that
-            tiles cannot handle, and it is non-combustible — which matters on
-            bushfire-prone land. It also collects clean rainwater, which matters
-            to properties on tank supply.
-          </p>
-          <p class="mt-5 leading-relaxed" style="color:var(--color-muted)">
-            The trade-off is that it is less forgiving of poor detailing. A
-            metal roof is only as good as its flashings and its fixing pattern.
-          </p>
+      <div class="max-w-prose space-y-16 lg:col-span-6 lg:col-start-7">
+        <Awaiting note="Confirm ENJ is happy to describe itself as a new business, and whether John and Ethan's own trade experience should be mentioned here.">
+          <div>
+            <h2 class="t-headline text-3xl">A new business</h2>
+            <p class="t-lead mt-6 text-muted">
+              ENJ Metal Roofing is new. Rather than lead with claims, this site shows the work itself,
+              photographed closely enough to judge the standard for yourself.
+            </p>
+          </div>
+        </Awaiting>
 
-          <h2 class="display mt-14 text-2xl lg:text-3xl">Who you'll deal with</h2>
-          <p class="mt-6 leading-relaxed" style="color:var(--color-muted)">
-            {site.contacts.map((c) => c.name).join(' and ')} — the same people who
-            quote the job are the people on site.
+        <div>
+          <h2 class="t-headline text-3xl">Why metal</h2>
+          <p class="mt-6 text-muted">
+            Metal roofing suits this part of the coast. It is far lighter than tile, it sheds water at
+            lower pitches than tiles can, and steel sheeting is non-combustible, which matters on
+            bushfire-prone land. It is also widely used to collect rainwater for tanks.
           </p>
-
-          <ul class="mt-8 space-y-5 border-t border-line pt-8">
-            {
-              site.contacts.map((c) => (
-                <li>
-                  <a href={`tel:${c.phone}`} class="group flex items-baseline justify-between gap-6 border-b border-line pb-4">
-                    <span class="label" style="color:var(--color-muted)">{c.name}</span>
-                    <span class="display text-xl transition-colors duration-200 group-hover:text-red">
-                      {c.display}
-                    </span>
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-
-          {
-            (hasLicence || hasAbn) && (
-              <dl class="mt-10 border-t border-line pt-6">
-                {hasAbn && (
-                  <div class="flex justify-between gap-6 border-b border-line py-3">
-                    <dt class="label" style="color:var(--color-muted)">ABN</dt>
-                    <dd class="text-sm" style="font-weight:600">{site.abn}</dd>
-                  </div>
-                )}
-                {hasLicence && (
-                  <div class="flex justify-between gap-6 border-b border-line py-3">
-                    <dt class="label" style="color:var(--color-muted)">
-                      {site.licence.authority} Licence
-                    </dt>
-                    <dd class="text-sm" style="font-weight:600">{site.licence.number}</dd>
-                  </div>
-                )}
-              </dl>
-            )
-          }
+          <p class="mt-5 text-muted">
+            It is less forgiving of poor detailing. A metal roof is only as good as its flashings and its
+            fixing pattern.
+          </p>
         </div>
 
-        <aside class="space-y-5">
-          <AssetSlot
-            role="portrait"
-            ratio="4/5"
-            brief="John and Ethan on site, in work gear, with a roof behind them. Real photograph — no stock imagery, no AI-generated people."
-          />
-          <AssetSlot
-            role="during"
-            ratio="4/3"
-            tone="light"
-            brief="Work vehicle or equipment with ENJ branding visible, if it exists."
-          />
-        </aside>
+        <div>
+          <h2 class="t-headline text-3xl">Who you'll deal with</h2>
+          <p class="mt-6 text-muted">
+            Call {names} directly about your roof.
+          </p>
+          <CallList tone="paper" class="mt-8" />
+        </div>
+
+        {
+          (hasLicence || hasAbn) && (
+            <dl class="divide-y divide-line border-y border-line">
+              {hasLicence && (
+                <div class="flex items-baseline justify-between gap-6 py-4">
+                  <dt class="label text-muted">{site.licence.authority} licence</dt>
+                  <dd class="tabular font-semibold">{site.licence.number}</dd>
+                </div>
+              )}
+              {hasAbn && (
+                <div class="flex items-baseline justify-between gap-6 py-4">
+                  <dt class="label text-muted">ABN</dt>
+                  <dd class="tabular font-semibold">{site.abn}</dd>
+                </div>
+              )}
+            </dl>
+          )
+        }
+
+        <Awaiting note="Supply licence number, ABN and public liability insurance details. Each appears here and in the footer once added to src/data/site.ts.">
+          <p class="text-sm text-muted">Licence, ABN and insurance details will appear here.</p>
+        </Awaiting>
       </div>
     </div>
   </section>
 
-  <section class="bg-ink py-section-lg text-paper">
-    <div class="container-page">
-      <h2 class="display max-w-[16ch] text-3xl lg:text-4xl">
-        Get a quote on your roof
-      </h2>
-      <a
-        href="/contact/"
-        class="mt-9 inline-block rounded-sm bg-cta px-8 py-4.5 text-xs uppercase text-white transition-colors duration-200 hover:bg-red"
-        style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider)"
-      >
-        Get a free quote
-      </a>
+  <section class="bg-ink py-(--spacing-section) text-paper">
+    <div class="container-page flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+      <h2 class="t-headline max-w-[16ch] text-4xl">Get a quote on your roof</h2>
+      <Button href={quoteHref} size="lg">Get a free quote</Button>
     </div>
   </section>
 </Base>

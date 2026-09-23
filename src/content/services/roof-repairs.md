@@ -1,37 +1,36 @@
 ---
-title: Roof Repairs & Maintenance
+# DRAFT: awaiting ENJ confirmation that this service is offered and the
+# description is accurate. Set draft: false once confirmed.
+title: Roof repairs
 shortTitle: Repairs
-summary: Leak investigation, storm damage repair, flashing and sheet replacement, and maintenance to extend the life of an existing metal roof.
+summary: Finding and fixing leaks, repairing storm damage, and replacing damaged sheets and flashings on existing metal roofs.
 includes:
-  - Leak investigation and reporting
-  - Replacement of damaged or corroded sheets
+  - Finding where a leak is coming from
+  - Replacing damaged or corroded sheets
   - Flashing, ridge capping and valley repairs
-  - Re-fastening and screw replacement
-  - Storm and impact damage repair
+  - Replacing failed screws and washers
+  - Storm and impact damage repairs
 suitableFor:
-  - Active leaks and water ingress
+  - Active leaks and water getting in
   - Storm or fallen-branch damage
-  - Roofs showing rust, lifting sheets or failed sealant
-  - Pre-sale and pre-winter inspections
+  - Roofs with rust, lifting sheets or failed sealant
 order: 3
 draft: true
 ---
 
-Most roof leaks are not holes in the sheeting. They start at junctions —
-flashings, valleys, penetrations and ridge capping — or at fasteners whose
-washers have perished. Finding the actual entry point matters more than the
-repair itself, because water can travel a long way along a batten before it
-appears on a ceiling.
+Most leaks in a metal roof are not holes in the sheeting. They start at junctions (flashings,
+valleys, penetrations and ridge capping) or at screws whose washers have perished. Finding the
+actual entry point matters more than the repair itself, because water can run a long way along a
+batten before it shows on a ceiling.
 
-## Common failure points on coastal roofs
+## Common problems on coastal roofs
 
-- Fastener washers degrading under UV and salt exposure
-- Corrosion where dissimilar metals meet, or where debris traps moisture
-- Sealant failure at flues, vents and skylight surrounds
-- Valleys blocked by leaf litter, causing water to back up under sheets
+- Screw washers breaking down under sun and salt
+- Corrosion where different metals meet, or where debris holds moisture
+- Sealant failing around flues, vents and skylights
+- Valleys blocked with leaves, backing water up under the sheets
 
-## Maintenance
+## Keeping a coastal roof in shape
 
-Metal roofs in marine environments benefit from being washed, particularly
-areas sheltered from rainfall such as under eaves and behind parapets, where
-salt deposits are not rinsed away naturally.
+Metal roofs near the sea benefit from being washed, especially areas the rain does not reach,
+such as under eaves, where salt builds up.

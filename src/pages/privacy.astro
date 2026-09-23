@@ -1,86 +1,62 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/layout/PageHeader.astro';
+import Awaiting from '../components/review/Awaiting.astro';
 import { site } from '../data/site';
 
-// NOTE FOR ENJ: this is a plain-language baseline covering what the site
-// actually does. It has not been reviewed by a lawyer. Have it checked before
-// launch, particularly if analytics or advertising pixels are added later.
+// A plain-language baseline describing what the site actually does. It has
+// not been reviewed by a lawyer; have it checked before launch, and update it
+// if analytics or advertising tags are ever added.
 ---
 
 <Base
   title="Privacy Policy"
-  description="How ENJ Metal Roofing collects, uses and stores personal information submitted through this website."
-  noindex={false}
+  description="How ENJ Metal Roofing collects, uses and stores personal information sent through this website."
 >
-  <PageHeader
-    eyebrow="Legal"
-    title="Privacy policy"
-    trail={[{ label: 'Privacy', href: '/privacy/' }]}
-  />
+  <PageHeader tone="paper" title="Privacy policy" trail={[{ label: 'Privacy', href: '/privacy/' }]} />
 
-  <section class="bg-paper py-section">
+  <section class="bg-paper py-(--spacing-section)">
     <div class="container-page">
+      <Awaiting note="Have this policy checked (ideally by a lawyer) before launch." class="mb-12 max-w-prose">
+        <p class="text-sm text-muted">Review note only. The policy below appears in every build.</p>
+      </Awaiting>
       <div class="prose-enj max-w-prose">
-        <p>
-          This policy explains what {site.name} does with personal information
-          collected through this website.
-        </p>
+          <p>This policy explains what {site.name} does with personal information collected through this website.</p>
 
-        <h2>What we collect</h2>
-        <p>
-          The enquiry form on this site collects your name, phone number,
-          suburb, the type of work you need, and optionally your email address
-          and any details you choose to write. Nothing else is collected, and
-          the site does not use advertising or tracking cookies.
-        </p>
+          <h2>What we collect</h2>
+          <p>
+            The quote form collects your name, phone number, the suburb of the property and the type of work
+            you need, plus your email address and any details you choose to add. Nothing else is collected,
+            and the site does not use advertising or tracking cookies.
+          </p>
 
-        <h2>Why we collect it</h2>
-        <p>
-          Solely to respond to your enquiry and to quote on the work. We do not
-          sell, rent or share your information with third parties for marketing.
-        </p>
+          <h2>Why we collect it</h2>
+          <p>
+            Only to respond to your enquiry and quote on the work. We do not sell, rent or share your
+            information with anyone for marketing.
+          </p>
 
-        <h2>How it is stored</h2>
-        <p>
-          Enquiries are delivered by email to {site.email} and are kept only as
-          long as needed to quote and complete the work, or to meet record-keeping
-          obligations.
-        </p>
+          <h2>How it is stored</h2>
+          <p>
+            Enquiries are delivered by email to {site.email} and kept only as long as needed to quote and
+            complete the work, or to meet record-keeping obligations.
+          </p>
 
-        <h2>Access and correction</h2>
-        <p>
-          You can ask what information we hold about you, ask for it to be
-          corrected, or ask for it to be deleted. Contact us at {site.email} or
-          call {site.contacts[0].display}.
-        </p>
+          <h2>Access and correction</h2>
+          <p>
+            You can ask what information we hold about you, and ask for it to be corrected or deleted. Email
+            {' '}{site.email} or call {site.contacts[0].display}.
+          </p>
 
-        <h2>Complaints</h2>
-        <p>
-          If you are not satisfied with how we have handled your information,
-          contact us first. You may also complain to the Office of the
-          Australian Information Commissioner.
-        </p>
+          <h2>Complaints</h2>
+          <p>
+            If you are not satisfied with how we have handled your information, contact us first. You can
+            also complain to the Office of the Australian Information Commissioner.
+          </p>
 
-        <h2>Changes</h2>
-        <p>
-          If this policy changes, the updated version will be published on this
-          page.
-        </p>
+          <h2>Changes</h2>
+          <p>If this policy changes, the updated version will be published on this page.</p>
       </div>
     </div>
   </section>
 </Base>
-
-<style is:global>
-  .prose-enj > * + * { margin-top: 1.4em; }
-  .prose-enj h2 {
-    margin-top: 2.4em;
-    font-size: var(--text-xl);
-    font-stretch: 106%;
-    font-weight: 700;
-    letter-spacing: var(--tracking-tighter);
-    text-transform: uppercase;
-  }
-  .prose-enj p { color: var(--color-muted); line-height: var(--leading-relaxed); }
-</style>
