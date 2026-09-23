@@ -1,56 +1,72 @@
 ---
+/**
+ * Inner-page opening. One family, several treatments:
+ *   tone   ink (dark) or paper (light) ground
+ *   aside  a named slot; when filled, the header splits into title + aside
+ *          (used for calls to action and contact details, never filler text)
+ */
 interface Props {
-  eyebrow: string;
   title: string;
   intro?: string;
-  /** Breadcrumb trail, excluding Home */
+  /** Short label above the title. Optional; most pages do not need one. */
+  eyebrow?: string;
+  tone?: 'ink' | 'paper';
+  /** Breadcrumb trail, excluding Home. */
   trail?: { label: string; href: string }[];
 }
 
-const { eyebrow, title, intro, trail = [] } = Astro.props;
+const { title, intro, eyebrow, tone = 'ink', trail = [] } = Astro.props;
+const ink = tone === 'ink';
+const hasAside = Astro.slots.has('aside');
 ---
 
-<section class="border-b border-line-dark bg-ink pb-section pt-14 text-paper sm:pt-20">
-  <div class="container-page">
+<section
+  class:list={[
+    'relative',
+    ink ? 'bg-ink text-paper' : 'border-b border-line bg-paper text-ink',
+  ]}
+>
+  <div class="container-page pb-(--spacing-section) pt-10 sm:pt-14">
     {
       trail.length > 0 && (
-        <nav aria-label="Breadcrumb" class="mb-10">
-          <ol class="flex flex-wrap items-center gap-2">
-            <li class="label" style="color:var(--color-muted-dark)">
-              {/* .label sets line-height:1 at 11px, so it needs py-2 to
-                  clear the 24px minimum target size. */}
-              <a href="/" class="inline-block py-2 transition-colors duration-200 hover:text-rose">
+        <nav aria-label="Breadcrumb" class="mb-10 sm:mb-14">
+          <ol class:list={['label flex flex-wrap items-center gap-x-2', ink ? 'text-muted-dark' : 'text-muted']}>
+            <li>
+              <a href="/" class="inline-block py-2 transition-colors hover:text-current">
                 Home
               </a>
             </li>
-            {trail.map((crumb) => (
-              <>
-                <li class="label" style="color:var(--color-muted-dark);opacity:.5" aria-hidden="true">
+            {trail.map((crumb, i) => (
+              <li class="flex items-center gap-x-2">
+                <span aria-hidden="true" class="opacity-50">
                   /
-                </li>
-                <li class="label" style="color:var(--color-muted-dark)">
-                  <a
-                    href={crumb.href}
-                    class="inline-block py-2 transition-colors duration-200 hover:text-rose"
-                  >
-                    {crumb.label}
-                  </a>
-                </li>
-              </>
+                </span>
+                <a
+                  href={crumb.href}
+                  aria-current={i === trail.length - 1 ? 'page' : undefined}
+                  class="inline-block py-2 transition-colors hover:text-current"
+                >
+                  {crumb.label}
+                </a>
+              </li>
             ))}
           </ol>
         </nav>
       )
     }
 
-    <p class="label" style="color:var(--color-crimson)">{eyebrow}</p>
-    <h1 class="display mt-7 max-w-[16ch] text-4xl lg:text-5xl">{title}</h1>
-    {
-      intro && (
-        <p class="mt-8 max-w-[56ch] text-lg leading-relaxed" style="color:var(--color-muted-dark)">
-          {intro}
-        </p>
-      )
-    }
+    <div class:list={['grid gap-12', hasAside && 'lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-end lg:gap-20']}>
+      <div class="min-w-0">
+        {eyebrow && <p class:list={['label mb-6', ink ? 'text-crimson' : 'text-red']}>{eyebrow}</p>}
+        <h1 class="t-display max-w-[15ch] text-5xl">{title}</h1>
+        {
+          intro && (
+            <p class:list={['t-lead mt-7 max-w-[52ch]', ink ? 'text-muted-dark' : 'text-muted']}>{intro}</p>
+          )
+        }
+        <slot />
+      </div>
+      {hasAside && <div class="min-w-0"><slot name="aside" /></div>}
+    </div>
   </div>
 </section>

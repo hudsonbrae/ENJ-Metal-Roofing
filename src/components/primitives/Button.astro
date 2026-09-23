@@ -1,41 +1,43 @@
-﻿---
+---
+/**
+ * The site's only button. Renders a link when given `href`, otherwise a
+ * <button>. Styling lives in global.css (.btn and friends) so a plain form
+ * <button> or a script can share it.
+ */
+type Variant = 'primary' | 'secondary' | 'secondary-dark';
+type Size = 'sm' | 'md' | 'lg';
+
 interface Props {
-  href: string;
-  variant?: 'primary' | 'outline' | 'outline-dark';
-  size?: 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit';
+  variant?: Variant;
+  size?: Size;
+  block?: boolean;
   class?: string;
-  [key: string]: unknown;
+  [attribute: string]: unknown;
 }
 
 const {
   href,
+  type = 'button',
   variant = 'primary',
   size = 'md',
-  class: className = '',
+  block = false,
+  class: className,
   ...rest
 } = Astro.props;
 
-const base =
-  'inline-flex items-center justify-center gap-3 rounded-sm font-sans uppercase ' +
-  'transition-colors duration-200 ease-standard';
-
-const sizes = {
-  md: 'px-6 py-3.5 text-2xs tracking-wider',
-  lg: 'px-8 py-4.5 text-xs tracking-wider',
-};
-
-const variants = {
-  primary: 'bg-cta text-white hover:bg-red',
-  outline: 'border border-ink/25 text-ink hover:bg-ink hover:text-paper',
-  'outline-dark': 'border border-rose/35 text-paper hover:bg-paper hover:text-ink',
-};
+const classes = ['btn', `btn-${variant}`, size !== 'md' && `btn-${size}`, block && 'btn-block', className];
 ---
 
-<a
-  href={href}
-  class:list={[base, sizes[size], variants[variant], className]}
-  style="font-weight:600;font-stretch:88%"
-  {...rest}
->
-  <slot />
-</a>
+{
+  href ? (
+    <a href={href} class:list={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class:list={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}

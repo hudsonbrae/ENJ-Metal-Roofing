@@ -1,16 +1,13 @@
 @import "tailwindcss";
 
-/* ═══════════════════════════════════════════════════════════════
-   ENJ METAL ROOFING — DESIGN SYSTEM
+/* ENJ Metal Roofing design system.
 
-   Colour values sampled directly from the supplied logo artwork.
-   The brand "black" is #290B0D — a dark oxblood, not pure black.
-   Using it everywhere is what makes the site read as ENJ rather
-   than as generic dark UI.
-   ═══════════════════════════════════════════════════════════════ */
+   Colours are sampled from the supplied logo artwork. The brand dark is
+   #290B0D, a dark oxblood rather than black; using it everywhere is what
+   makes the site read as ENJ rather than generic dark UI. */
 
-/* One file. wght 100–900 + wdth 62–125% drives the entire system:
-   expanded+heavy for display, normal for body, condensed for labels. */
+/* One variable font file. The weight axis (100-900) and width axis
+   (62-125%) together cover display, body and label styles. */
 @font-face {
   font-family: "Archivo";
   src: url("/fonts/archivo-var.woff2") format("woff2-variations");
@@ -21,9 +18,8 @@
 }
 
 @theme {
-  /* Tailwind's defaults are deleted, not extended. There is no slate-600,
-     no text-4xl, no rounded-lg. Only ENJ tokens exist. This is deliberate:
-     it makes drifting back toward a generic look impossible by accident. */
+  /* Tailwind's defaults are removed, not extended, so a generic
+     slate-600 / text-4xl / rounded-lg cannot creep back in. */
   --color-*: initial;
   --font-*: initial;
   --text-*: initial;
@@ -32,7 +28,7 @@
   --tracking-*: initial;
   --leading-*: initial;
 
-  /* ── Colour ─────────────────────────────────────────────────── */
+  /* Colour */
   --color-ink: #290b0d;
   --color-ink-950: #180506;
   --color-ink-900: #290b0d;
@@ -40,15 +36,13 @@
   --color-ink-700: #4e1e21;
   --color-ink-600: #6b2e32;
 
-  /* The logo's crimson (#E24050) sits just under WCAG AA in both directions:
-     4.13:1 for white text on it, 4.43:1 for it as text on ink. Rather than
-     compromise one, the role is split — a darker fill for buttons, a slightly
-     brighter accent for text on dark grounds. Both now clear 4.5:1, and the
-     pair still reads as the logo's red. */
-  --color-red: #942531; /* accent on light grounds — 7.8:1 on paper */
-  --color-crimson: #e5485a; /* accent TEXT on ink — 4.71:1 */
-  --color-cta: #d63347; /* button FILL with white text — 4.75:1 */
-  --color-rose: #de6f7e; /* hover / hairlines on ink — 5.8:1 */
+  /* The logo's crimson (#E24050) misses WCAG AA both ways: 4.13:1 with
+     white text on it, 4.43:1 as text on ink. The role is split so both
+     uses pass while still reading as the logo red. */
+  --color-red: #942531; /* accent on light grounds, 7.8:1 on paper */
+  --color-crimson: #e5485a; /* accent text on ink, 4.71:1 */
+  --color-cta: #d63347; /* button fill behind white text, 4.75:1 */
+  --color-rose: #de6f7e; /* hover and hairlines on ink, 5.8:1 */
 
   --color-paper: #faf9f7;
   --color-paper-2: #f2f0ec;
@@ -62,7 +56,7 @@
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  /* ── Type scale (fluid, 360px → 1440px) ─────────────────────── */
+  /* Type scale, fluid between 360px and 1440px */
   --text-micro: 0.6875rem;
   --text-2xs: 0.75rem;
   --text-xs: 0.8125rem;
@@ -74,7 +68,6 @@
   --text-3xl: clamp(1.625rem, 1.25rem + 1.67vw, 2.75rem);
   --text-4xl: clamp(2rem, 1.333rem + 2.96vw, 4rem);
   --text-5xl: clamp(2.5rem, 1.5rem + 4.44vw, 5.5rem);
-  --text-6xl: clamp(3.25rem, 1.833rem + 6.3vw, 7.5rem);
 
   --font-sans: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
@@ -92,25 +85,35 @@
   --leading-normal: 1.5;
   --leading-relaxed: 1.66;
 
-  /* ── Rhythm ─────────────────────────────────────────────────── */
+  /* Rhythm */
   --spacing-gutter: clamp(1.25rem, 5vw, 4rem);
-  --spacing-section: clamp(4.5rem, 2.5rem + 9vw, 10rem);
-  --spacing-section-lg: clamp(6rem, 3rem + 12vw, 13rem);
+  --spacing-section: clamp(4.5rem, 2.5rem + 8vw, 9rem);
+  --spacing-section-lg: clamp(5.5rem, 3rem + 10vw, 11rem);
+  --spacing-header: 4rem;
 
   --container-page: 90rem;
   --container-wide: 78rem;
   --container-prose: 38rem;
 
-  /* ── Edges & depth (architectural = sharp) ──────────────────── */
+  /* Edges: one sharp system. Buttons and inputs 2px, images 0. */
   --radius-sm: 2px;
   --shadow-lift: 0 1px 2px rgb(24 5 6 / 0.06), 0 12px 32px -12px rgb(24 5 6 / 0.18);
 
-  /* ── Motion ─────────────────────────────────────────────────── */
+  /* Motion */
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @layer base {
+  :root {
+    --header-h: 4rem;
+  }
+  @media (min-width: 64rem) {
+    :root {
+      --header-h: 4.75rem;
+    }
+  }
+
   *,
   *::before,
   *::after {
@@ -120,6 +123,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
   }
 
   body {
@@ -135,7 +139,10 @@
     text-rendering: optimizeLegibility;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     margin: 0;
     font-weight: 700;
     line-height: var(--leading-tight);
@@ -148,7 +155,10 @@
     text-wrap: pretty;
   }
 
-  img, picture, svg, video {
+  img,
+  picture,
+  svg,
+  video {
     display: block;
     max-width: 100%;
   }
@@ -158,7 +168,7 @@
     text-underline-offset: 0.22em;
   }
 
-  /* Visible, branded focus. Never removed — only restyled. */
+  /* Visible, branded focus. Restyled, never removed. */
   :focus-visible {
     outline: 2px solid var(--color-crimson);
     outline-offset: 3px;
@@ -169,7 +179,6 @@
     color: var(--color-white);
   }
 
-  /* Motion is decoration. If it isn't wanted, it doesn't run. */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -186,11 +195,22 @@
 }
 
 @layer components {
-  /* ── Display type ────────────────────────────────────────────
-     Expanded width + heavy weight. This is the single strongest
-     brand signal on the site and the reason Archivo was chosen
-     over a default grotesque. */
-  .display {
+  .container-page {
+    width: 100%;
+    max-width: var(--container-page);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  /* Type hierarchy.
+
+     Display: uppercase and expanded. Reserved for the hero and page titles;
+     it is the strongest brand signal, so it is used sparingly.
+     Headline: section headings. Sentence case, heavy, slightly expanded.
+     Title: item-level headings (services, steps, projects).
+     Lead: introductory paragraphs.
+     Label: condensed, letterspaced annotation, as on a drawing set. */
+  .t-display {
     font-stretch: 112%;
     font-weight: 800;
     line-height: var(--leading-none);
@@ -198,10 +218,25 @@
     text-transform: uppercase;
   }
 
-  /* ── Technical annotation ────────────────────────────────────
-     Condensed + heavily letterspaced, the way labels read on an
-     architectural drawing set. Used for section indices and
-     eyebrows — never for anything longer than a few words. */
+  .t-headline {
+    font-stretch: 104%;
+    font-weight: 750;
+    line-height: 1.04;
+    letter-spacing: -0.032em;
+  }
+
+  .t-title {
+    font-stretch: 100%;
+    font-weight: 650;
+    line-height: 1.15;
+    letter-spacing: -0.018em;
+  }
+
+  .t-lead {
+    font-size: var(--text-lg);
+    line-height: 1.55;
+  }
+
   .label {
     font-stretch: 88%;
     font-size: var(--text-micro);
@@ -211,14 +246,106 @@
     line-height: 1;
   }
 
-  .container-page {
-    width: 100%;
-    max-width: var(--container-page);
-    margin-inline: auto;
-    padding-inline: var(--spacing-gutter);
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 
-  /* Hairline rule — the connective tissue between sections. */
+  /* Buttons. One shape, three roles. The primary action is always the
+     crimson fill; secondary actions are outlines tuned to their ground. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 3.25rem;
+    padding: 0 1.75rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-stretch: 88%;
+    font-weight: 600;
+    letter-spacing: var(--tracking-wider);
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 200ms var(--ease-standard),
+      border-color 200ms var(--ease-standard),
+      color 200ms var(--ease-standard),
+      transform 120ms var(--ease-standard);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn[disabled],
+  .btn[aria-disabled="true"] {
+    cursor: progress;
+    opacity: 0.7;
+  }
+
+  .btn-primary {
+    background-color: var(--color-cta);
+    color: var(--color-white);
+  }
+  .btn-primary:hover {
+    background-color: var(--color-red);
+  }
+
+  .btn-secondary {
+    border-color: rgb(41 11 13 / 0.28);
+    color: var(--color-ink);
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .btn-secondary-dark {
+    border-color: rgb(222 111 126 / 0.4);
+    color: var(--color-paper);
+  }
+  .btn-secondary-dark:hover {
+    background-color: var(--color-paper);
+    border-color: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  .btn-sm {
+    min-height: 2.75rem;
+    padding: 0 1.25rem;
+    font-size: var(--text-2xs);
+  }
+  .btn-lg {
+    min-height: 3.5rem;
+    padding: 0 2rem;
+  }
+  .btn-block {
+    display: flex;
+    width: 100%;
+  }
+
+  /* Text link with an underline that draws in on hover. */
+  .link {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 1px;
+    padding-bottom: 2px;
+    text-decoration: none;
+    transition: background-size 300ms var(--ease-expo);
+  }
+  .link:hover,
+  .link:focus-visible {
+    background-size: 100% 1px;
+  }
+  .link-static {
+    background-size: 100% 1px;
+  }
+
   .rule {
     border: 0;
     border-top: 1px solid var(--color-line);
@@ -226,5 +353,128 @@
   }
   .rule-dark {
     border-top-color: var(--color-line-dark);
+  }
+
+  /* Long-form copy rendered from markdown. */
+  .prose-enj > * + * {
+    margin-top: 1.25em;
+  }
+  .prose-enj h2 {
+    margin-top: 2.2em;
+    font-size: var(--text-2xl);
+    font-stretch: 104%;
+    font-weight: 750;
+    letter-spacing: -0.028em;
+    line-height: 1.1;
+  }
+  .prose-enj h3 {
+    margin-top: 1.8em;
+    font-size: var(--text-lg);
+    font-weight: 650;
+  }
+  .prose-enj p,
+  .prose-enj li {
+    color: var(--color-muted);
+    line-height: var(--leading-relaxed);
+  }
+  .prose-enj ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .prose-enj ul > li {
+    position: relative;
+    padding-left: 1.4em;
+  }
+  .prose-enj ul > li + li {
+    margin-top: 0.4em;
+  }
+  .prose-enj ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.8em;
+    width: 0.7em;
+    height: 1px;
+    background: var(--color-red);
+  }
+  .prose-enj strong {
+    color: var(--color-ink);
+    font-weight: 650;
+  }
+  .prose-enj a {
+    color: var(--color-red);
+    text-decoration: underline;
+  }
+}
+
+/* Motion.
+
+   Content is visible by default. Elements only start hidden once a script
+   confirms both JavaScript and a no-preference motion setting (the
+   `motion-ok` class on <html>), so nothing is ever lost to a failed script
+   or a reduced-motion preference. Transform and opacity only. */
+@layer utilities {
+  .motion-ok .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 700ms var(--ease-expo),
+      transform 700ms var(--ease-expo);
+    transition-delay: calc(var(--d, 0) * 80ms);
+  }
+  .motion-ok .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  .motion-ok .reveal-rule {
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 900ms var(--ease-expo);
+    transition-delay: calc(var(--d, 0) * 80ms);
+  }
+  .motion-ok .reveal-rule.is-in {
+    transform: none;
+  }
+
+  .motion-ok .reveal-image {
+    clip-path: inset(0 0 12% 0);
+    opacity: 0.001;
+    transition:
+      clip-path 900ms var(--ease-expo),
+      opacity 500ms var(--ease-expo);
+  }
+  .motion-ok .reveal-image.is-in {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+
+  /* Hero image settles in on load rather than on scroll. The frame only
+     clips; the zoom happens on the image inside it, which the frame's
+     overflow:hidden contains. Scaling the frame itself would push past the
+     page edge whenever the animation is paused (browsers pause animations
+     on pages that are not visible). */
+  @keyframes enj-settle-frame {
+    from {
+      clip-path: inset(0 0 10% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  @keyframes enj-settle-image {
+    from {
+      transform: scale(1.04);
+    }
+    to {
+      transform: none;
+    }
+  }
+  .motion-ok .settle {
+    animation: enj-settle-frame 1100ms var(--ease-expo) both;
+  }
+  .motion-ok .settle img {
+    animation: enj-settle-image 1400ms var(--ease-expo) both;
   }
 }

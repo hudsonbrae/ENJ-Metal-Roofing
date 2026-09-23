@@ -1,0 +1,44 @@
+---
+/**
+ * The ENJ lockup, as supplied. The single place the logo is referenced.
+ *
+ * The supplied artwork is a stacked PNG whose "ROOFING" line is roughly
+ * 12% of its height, so it cannot be fully legible at header sizes. It is
+ * rendered from pre-sized, pipeline-optimised versions at 1x/2x/3x density
+ * so it is as sharp as the source allows. When ENJ supplies an SVG or a
+ * horizontal lockup, swap the imports below; nothing else changes.
+ */
+import { Image } from 'astro:assets';
+import onDark from '../../assets/brand/enj-logo.png';
+import onLight from '../../assets/brand/enj-logo-ink.png';
+import { site } from '../../data/site';
+
+interface Props {
+  /** Which ground the logo sits on. The dark-ground lockup has a white wordmark. */
+  ground?: 'dark' | 'light';
+  /** Rendered height in CSS pixels. */
+  height: number;
+  priority?: boolean;
+  /** Empty alt when a visible or aria label already names the business. */
+  decorative?: boolean;
+  class?: string;
+}
+
+const { ground = 'dark', height, priority = false, decorative = false, class: className } = Astro.props;
+const source = ground === 'dark' ? onDark : onLight;
+const width = Math.round((source.width / source.height) * height);
+---
+
+<Image
+  src={source}
+  alt={decorative ? '' : site.name}
+  width={width}
+  height={height}
+  densities={[1, 2, 3]}
+  format="webp"
+  quality={92}
+  loading={priority ? 'eager' : 'lazy'}
+  decoding={priority ? 'sync' : 'async'}
+  class:list={['block h-auto', className]}
+  style={`width:${width}px;max-width:100%`}
+/>

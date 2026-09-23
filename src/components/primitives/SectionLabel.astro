@@ -1,0 +1,21 @@
+---
+/**
+ * Numbered section label, read like a sheet reference on a drawing set.
+ * Used on a few primary sections only (Work, Services, Process), not on
+ * every section, so it stays a signature rather than a repeated tic.
+ */
+interface Props {
+  index: string;
+  text: string;
+  tone?: 'ink' | 'paper';
+  class?: string;
+}
+
+const { index, text, tone = 'paper', class: className } = Astro.props;
+---
+
+<p class:list={['label flex items-center gap-3', tone === 'ink' ? 'text-crimson' : 'text-red', className]}>
+  <span class="tabular">{index}</span>
+  <span aria-hidden="true" class="h-px w-6 bg-current opacity-60"></span>
+  <span>{text}</span>
+</p>

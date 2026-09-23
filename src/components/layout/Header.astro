@@ -1,143 +1,97 @@
-﻿---
+---
+import Logo from '../brand/Logo.astro';
+import Button from '../primitives/Button.astro';
 import { site, primaryContact } from '../../data/site';
-
-const nav = [
-  { label: 'Services', href: '/services/' },
-  { label: 'Work', href: '/projects/' },
-  { label: 'About', href: '/about/' },
-  { label: 'Contact', href: '/contact/' },
-];
+import { primaryNav, quoteHref, isCurrent } from '../../data/navigation';
 
 const path = Astro.url.pathname;
-const isActive = (href: string) => path === href || path.startsWith(href);
 ---
 
-<header class="sticky top-0 z-50 border-b border-line-dark bg-ink">
-  <div class="container-page flex items-center justify-between gap-6 py-4 lg:py-5">
-    <a
-      href="/"
-      class="shrink-0"
-      aria-label={`${site.name} — home`}
-    >
-      {/* The supplied lockup is a dark-ground asset: the wordmark is white. */}
-      <img
-        src="/brand/enj-logo.png"
-        alt={site.name}
-        width="1280"
-        height="569"
-        class="h-12 w-auto sm:h-14 lg:h-16"
-        fetchpriority="high"
-      />
+<header class="sticky top-0 z-50 border-b border-line-dark bg-ink text-paper">
+  <div class="container-page flex h-(--header-h) items-center justify-between gap-6">
+    <a href="/" class="-my-1 shrink-0 py-1" aria-label={`${site.name}, home`}>
+      <Logo ground="dark" height={42} priority decorative class="lg:hidden" />
+      <Logo ground="dark" height={52} priority decorative class="hidden lg:block" />
     </a>
 
     <nav class="hidden lg:block" aria-label="Primary">
-      <ul class="flex items-center gap-9">
+      <ul class="flex items-center gap-10">
         {
-          nav.map((item) => (
-            <li>
-              <a
-                href={item.href}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-                class="relative block py-1 text-2xs uppercase transition-colors duration-200"
-                style={`font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider);color:${
-                  isActive(item.href) ? 'var(--color-paper)' : 'var(--color-muted-dark)'
-                }`}
-                data-nav-link
-              >
-                {item.label}
-                {isActive(item.href) && (
+          primaryNav.map((item) => {
+            const current = isCurrent(path, item.href);
+            return (
+              <li>
+                <a
+                  href={item.href}
+                  aria-current={current ? 'page' : undefined}
+                  class:list={[
+                    'label relative block py-3 transition-colors duration-200 hover:text-paper',
+                    current ? 'text-paper' : 'text-muted-dark',
+                  ]}
+                >
+                  {item.label}
                   <span
-                    class="absolute -bottom-0.5 left-0 h-px w-full"
-                    style="background:var(--color-crimson)"
+                    class:list={[
+                      'absolute inset-x-0 bottom-1.5 h-px origin-left bg-crimson transition-transform duration-300',
+                      current ? 'scale-x-100' : 'scale-x-0',
+                    ]}
                     aria-hidden="true"
                   />
-                )}
-              </a>
-            </li>
-          ))
+                </a>
+              </li>
+            );
+          })
         }
       </ul>
     </nav>
 
-    <div class="hidden items-center gap-6 lg:flex">
-      <a
-        href={`tel:${primaryContact.phone}`}
-        class="py-2 text-2xs uppercase transition-colors duration-200"
-        style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider);color:var(--color-paper)"
-      >
-        {primaryContact.display}
+    <div class="hidden items-center gap-7 lg:flex">
+      <a href={`tel:${primaryContact.phone}`} class="label tabular py-3 text-paper transition-colors hover:text-rose">
+        <span class="sr-only">Call {primaryContact.name} on </span>{primaryContact.display}
       </a>
-      <a
-        href="/contact/"
-        class="rounded-sm bg-cta px-5 py-3 text-2xs uppercase text-white transition-colors duration-200 hover:bg-red"
-        style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider)"
-      >
-        Free quote
-      </a>
+      <Button href={quoteHref} size="sm">Get a free quote</Button>
     </div>
 
     <button
       type="button"
-      class="-mr-2 flex items-center gap-2.5 p-2 lg:hidden"
-      style="color:var(--color-paper)"
-      aria-label="Open menu"
+      class="-mr-2 flex min-h-11 items-center gap-3 px-2 text-paper lg:hidden"
+      aria-haspopup="dialog"
       data-menu-open
     >
-      <span class="label" style="opacity:.8">Menu</span>
+      <span class="label">Menu</span>
       <svg width="20" height="12" viewBox="0 0 20 12" aria-hidden="true">
-        <path d="M0 1h20M0 11h20" stroke="currentColor" stroke-width="1.5" />
+        <path d="M0 1h20M0 11h20" stroke="currentColor" stroke-width="1.5"></path>
       </svg>
     </button>
   </div>
 </header>
 
-{/* Native <dialog>: focus trapping, Escape and backdrop come from the
-    platform with correct screen-reader semantics. No JS framework needed. */}
-<dialog
-  data-menu
-  class="m-0 h-full max-h-none w-full max-w-none bg-ink p-0 text-paper backdrop:bg-ink-950/80"
-  aria-label="Site menu"
->
+{/* Native <dialog>: focus containment, Escape and inert background come
+    from the platform with correct screen-reader semantics. */}
+<dialog data-menu class="menu m-0 h-dvh max-h-none w-full max-w-none bg-ink p-0 text-paper" aria-label="Site menu">
   <div class="flex h-full flex-col">
-    <div class="container-page flex items-center justify-between border-b border-line-dark py-4">
-      <img
-        src="/brand/enj-logo.png"
-        alt=""
-        width="1280"
-        height="569"
-        class="h-11 w-auto"
-      />
-      <button
-        type="button"
-        class="-mr-2 flex items-center gap-2.5 p-2"
-        style="color:var(--color-paper)"
-        aria-label="Close menu"
-        data-menu-close
-      >
-        <span class="label" style="opacity:.8">Close</span>
-        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-          <path d="M1 1l16 16M17 1L1 17" stroke="currentColor" stroke-width="1.5" />
+    <div class="container-page flex h-(--header-h) shrink-0 items-center justify-between border-b border-line-dark">
+      <Logo ground="dark" height={42} decorative />
+      <button type="button" class="-mr-2 flex min-h-11 items-center gap-3 px-2 text-paper" data-menu-close>
+        <span class="label">Close</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M1 1l14 14M15 1L1 15" stroke="currentColor" stroke-width="1.5"></path>
         </svg>
       </button>
     </div>
 
-    <nav class="container-page flex-1 py-10" aria-label="Site">
-      <ul class="flex flex-col">
+    <nav class="container-page flex-1 overflow-y-auto py-8" aria-label="Site">
+      <ul>
         {
-          nav.map((item, i) => (
-            <li class="border-b border-line-dark">
+          primaryNav.map((item, i) => (
+            <li class="menu-item border-b border-line-dark" style={`--i:${i}`}>
               <a
                 href={item.href}
-                class="display flex items-baseline gap-5 py-5 text-3xl"
-                style="color:var(--color-paper)"
+                aria-current={isCurrent(path, item.href) ? 'page' : undefined}
+                class="flex items-baseline gap-5 py-5"
               >
-                <span
-                  class="label"
-                  style="color:var(--color-crimson);transform:translateY(-.4em)"
-                >
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                {item.label}
+                <span class="label tabular text-crimson">{String(i + 1).padStart(2, '0')}</span>
+                <span class="t-headline text-3xl">{item.label}</span>
               </a>
             </li>
           ))
@@ -145,49 +99,82 @@ const isActive = (href: string) => path === href || path.startsWith(href);
       </ul>
     </nav>
 
-    <div class="container-page space-y-3 border-t border-line-dark py-8">
-      {
-        site.contacts.map((c) => (
-          <a
-            href={`tel:${c.phone}`}
-            class="flex items-baseline justify-between gap-4 py-1"
-          >
-            <span class="label" style="color:var(--color-muted-dark)">{c.name}</span>
-            <span class="text-lg" style="font-weight:600">{c.display}</span>
-          </a>
-        ))
-      }
-      <a
-        href="/contact/"
-        class="mt-5 block rounded-sm bg-cta px-6 py-4 text-center text-xs uppercase text-white"
-        style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider)"
-      >
-        Get a free quote
-      </a>
+    <div class="container-page shrink-0 border-t border-line-dark pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-5">
+      <ul class="grid grid-cols-2 gap-4">
+        {
+          site.contacts.map((contact) => (
+            <li>
+              <a href={`tel:${contact.phone}`} class="block py-1">
+                <span class="label block text-muted-dark">Call {contact.name}</span>
+                <span class="tabular mt-2 block text-lg font-semibold">{contact.display}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <Button href={quoteHref} block class="mt-5">Get a free quote</Button>
     </div>
   </div>
 </dialog>
 
+<style>
+  .menu {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+    transition:
+      opacity 220ms var(--ease-standard),
+      transform 420ms var(--ease-expo),
+      overlay 420ms allow-discrete,
+      display 420ms allow-discrete;
+  }
+  .menu[open] {
+    opacity: 1;
+    transform: none;
+  }
+  @starting-style {
+    .menu[open] {
+      opacity: 0;
+      transform: translateY(-0.75rem);
+    }
+  }
+  .menu::backdrop {
+    background: transparent;
+  }
+
+  .menu-item {
+    transition:
+      opacity 400ms var(--ease-expo),
+      transform 500ms var(--ease-expo);
+    transition-delay: calc(80ms + var(--i) * 45ms);
+  }
+  @starting-style {
+    .menu[open] .menu-item {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+  }
+</style>
+
 <script>
   const dialog = document.querySelector<HTMLDialogElement>('[data-menu]');
-  const open = document.querySelector<HTMLButtonElement>('[data-menu-open]');
-  const close = document.querySelector<HTMLButtonElement>('[data-menu-close]');
+  const opener = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const closer = document.querySelector<HTMLButtonElement>('[data-menu-close]');
 
-  open?.addEventListener('click', () => {
-    dialog?.showModal();
-    document.body.style.overflow = 'hidden';
-  });
-
-  const dismiss = () => {
-    dialog?.close();
-    document.body.style.overflow = '';
-  };
-
-  close?.addEventListener('click', dismiss);
-  dialog?.addEventListener('close', () => {
-    document.body.style.overflow = '';
-  });
-
-  // Close on navigation so the back button behaves predictably.
-  dialog?.querySelectorAll('a').forEach((a) => a.addEventListener('click', dismiss));
+  if (dialog && opener) {
+    opener.addEventListener('click', () => {
+      dialog.showModal();
+      document.body.style.overflow = 'hidden';
+    });
+    closer?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => {
+      document.body.style.overflow = '';
+      opener.focus();
+    });
+    // Close before following a link so Back returns to a closed menu.
+    dialog.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => dialog.close()));
+    // Nothing to close into at desktop width; tidy up if the window grows.
+    window.matchMedia('(min-width: 64rem)').addEventListener('change', (event) => {
+      if (event.matches && dialog.open) dialog.close();
+    });
+  }
 </script>

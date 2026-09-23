@@ -1,94 +1,87 @@
 ---
+import Logo from '../brand/Logo.astro';
 import { site, hasAbn, hasLicence } from '../../data/site';
+import { primaryNav } from '../../data/navigation';
+import { getServices } from '../../lib/content';
 
+const services = await getServices();
 const year = new Date().getFullYear();
-
-const columns = [
-  {
-    title: 'Services',
-    links: [
-      { label: 'Re-Roofing', href: '/services/re-roofing/' },
-      { label: 'New Roof Installation', href: '/services/new-roof-installation/' },
-      { label: 'Roof Repairs', href: '/services/roof-repairs/' },
-      { label: 'Guttering & Fascia', href: '/services/guttering-fascia/' },
-    ],
-  },
-  {
-    title: 'Company',
-    links: [
-      { label: 'Our Work', href: '/projects/' },
-      { label: 'About ENJ', href: '/about/' },
-      { label: 'Get a Quote', href: '/contact/' },
-    ],
-  },
-];
+const company = primaryNav.filter((item) => item.href !== '/services/');
 ---
 
 <footer class="bg-ink text-paper">
-  <div class="container-page py-section">
-    <div class="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:gap-10">
+  <div class="container-page pb-10 pt-(--spacing-section)">
+    <div class="grid gap-14 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_0.8fr_1.2fr] lg:gap-10">
       <div>
-        <img
-          src="/brand/enj-logo.png"
-          alt={site.name}
-          width="1280"
-          height="569"
-          class="h-16 w-auto"
-          loading="lazy"
-        />
-        <p class="mt-6 max-w-[34ch] text-sm leading-relaxed" style="color:var(--color-muted-dark)">
-          {/* States only the confirmed base. Widen this once ENJ confirms the
-              travel radius — see the handoff notes. */}
-          Metal roofing based in {site.base.suburb}, {site.base.state}.
+        <Logo ground="dark" height={72} />
+        <p class="mt-6 max-w-[32ch] text-sm leading-relaxed text-muted-dark">
+          Metal roofing, based in {site.base.suburb}, {site.base.state}.
         </p>
         <a
           href={site.social.instagram}
           rel="me noopener"
           target="_blank"
-          class="mt-5 inline-flex items-center gap-2.5 py-1.5 text-sm transition-colors duration-200 hover:text-rose"
+          class="mt-5 inline-flex min-h-11 items-center gap-2.5 text-sm text-muted-dark transition-colors hover:text-paper"
         >
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" stroke-width="1.7"/>
-            <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"/>
-            <circle cx="17.6" cy="6.4" r="1.3" fill="currentColor"/>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" stroke-width="1.7"></rect>
+            <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"></circle>
+            <circle cx="17.6" cy="6.4" r="1.3" fill="currentColor"></circle>
           </svg>
           {site.social.instagramHandle}
+          <span class="sr-only">(opens Instagram)</span>
         </a>
       </div>
 
       {
-        columns.map((col) => (
-          <nav aria-label={col.title}>
-            <h2 class="label" style="color:var(--color-crimson)">{col.title}</h2>
-            <ul class="mt-4 space-y-1">
-              {col.links.map((link) => (
+        services.length > 0 && (
+          <nav aria-labelledby="footer-services">
+            <h2 id="footer-services" class="label text-crimson">
+              Services
+            </h2>
+            <ul class="mt-4">
+              {services.map((service) => (
                 <li>
                   <a
-                    href={link.href}
-                    class="inline-block py-1.5 text-sm transition-colors duration-200 hover:text-rose"
-                    style="color:var(--color-muted-dark)"
+                    href={`/services/${service.id}/`}
+                    class="inline-block py-1.5 text-sm text-muted-dark transition-colors hover:text-paper"
                   >
-                    {link.label}
+                    {service.data.shortTitle ?? service.data.title}
                   </a>
                 </li>
               ))}
             </ul>
           </nav>
-        ))
+        )
       }
 
-      <div>
-        <h2 class="label" style="color:var(--color-crimson)">Contact</h2>
-        <ul class="mt-5 space-y-4">
+      <nav aria-labelledby="footer-company">
+        <h2 id="footer-company" class="label text-crimson">
+          Company
+        </h2>
+        <ul class="mt-4">
           {
-            site.contacts.map((c) => (
+            company.map((item) => (
               <li>
-                <a href={`tel:${c.phone}`} class="group block">
-                  <span class="label block" style="color:var(--color-muted-dark)">
-                    {c.name}
-                  </span>
-                  <span class="mt-1 block text-lg transition-colors duration-200 group-hover:text-rose" style="font-weight:600">
-                    {c.display}
+                <a href={item.href} class="inline-block py-1.5 text-sm text-muted-dark transition-colors hover:text-paper">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="label text-crimson">Contact</h2>
+        <ul class="mt-4 space-y-4">
+          {
+            site.contacts.map((contact) => (
+              <li>
+                <a href={`tel:${contact.phone}`} class="group block py-0.5">
+                  <span class="label block text-muted-dark">{contact.name}</span>
+                  <span class="tabular mt-1.5 block text-lg font-semibold transition-colors group-hover:text-rose">
+                    {contact.display}
                   </span>
                 </a>
               </li>
@@ -97,8 +90,7 @@ const columns = [
           <li>
             <a
               href={`mailto:${site.email}`}
-              class="inline-block break-all py-1.5 text-sm transition-colors duration-200 hover:text-rose"
-              style="color:var(--color-muted-dark)"
+              class="inline-block break-all py-1.5 text-sm text-muted-dark transition-colors hover:text-paper"
             >
               {site.email}
             </a>
@@ -107,17 +99,14 @@ const columns = [
       </div>
     </div>
 
-    <hr class="rule rule-dark mt-16" />
-
-    <div class="mt-8 flex flex-col gap-4 text-2xs sm:flex-row sm:items-center sm:justify-between" style="color:var(--color-muted-dark)">
-      <p>&copy; {year} {site.name}. All rights reserved.</p>
-      <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
-        {/* Rendered only once ENJ supplies verified values. Never a placeholder. */}
+    <div
+      class="mt-16 flex flex-col gap-3 border-t border-line-dark pt-6 text-2xs text-muted-dark sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>&copy; {year} {site.name}</p>
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-1">
         {hasAbn && <span>ABN {site.abn}</span>}
-        {hasLicence && <span>{site.licence.authority} Licence {site.licence.number}</span>}
-        <a href="/privacy/" class="inline-block py-1.5 transition-colors duration-200 hover:text-rose">
-          Privacy
-        </a>
+        {hasLicence && <span>{site.licence.authority} licence {site.licence.number}</span>}
+        <a href="/privacy/" class="inline-block py-1.5 transition-colors hover:text-paper">Privacy</a>
       </div>
     </div>
   </div>

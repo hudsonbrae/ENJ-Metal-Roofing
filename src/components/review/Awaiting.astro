@@ -1,0 +1,53 @@
+---
+/**
+ * Marks content that is waiting on ENJ.
+ *
+ * Review mode: renders the wrapped content with a visible note saying what
+ * needs confirming. Launch mode: renders nothing, so unconfirmed content
+ * cannot reach the public site. Once ENJ confirms, remove the wrapper.
+ */
+import { reviewMode } from '../../lib/mode';
+
+interface Props {
+  /** What ENJ needs to confirm or supply. */
+  note: string;
+  /** Still awaiting? Pass false once confirmed and the content renders plainly everywhere. */
+  when?: boolean;
+  /** Render the note inline (for short phrases) instead of as a block. */
+  inline?: boolean;
+  tone?: 'light' | 'dark';
+  class?: string;
+}
+
+const { note, when = true, inline = false, tone = 'light', class: className } = Astro.props;
+const Tag = inline ? 'span' : 'div';
+---
+
+{!when && <Tag class={className}><slot /></Tag>}
+{
+  when && reviewMode && (
+    <Tag
+      data-review-only
+      class:list={[
+        'awaiting relative outline-1 outline-offset-4 outline-dashed',
+        tone === 'dark' ? 'outline-crimson/60' : 'outline-red/45',
+        className,
+      ]}
+    >
+      <slot />
+      <span
+        class:list={[
+          'label mt-3 flex items-start gap-2 normal-case tracking-normal',
+          inline && 'ml-2 mt-0 inline-flex',
+          tone === 'dark' ? 'text-crimson' : 'text-red',
+        ]}
+        style="font-size:var(--text-2xs);letter-spacing:0.02em;font-stretch:100%;line-height:1.4"
+      >
+        <span class="shrink-0 uppercase" style="letter-spacing:var(--tracking-wider);font-stretch:88%">
+          Awaiting ENJ
+        </span>
+        <span>{note}</span>
+      </span>
+    </Tag>
+  )
+}
