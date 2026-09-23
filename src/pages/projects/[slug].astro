@@ -1,0 +1,162 @@
+---
+import Base from '../../layouts/Base.astro';
+import Photo from '../../components/media/Photo.astro';
+import ProjectMeta from '../../components/projects/ProjectMeta.astro';
+import Gallery from '../../components/projects/Gallery.astro';
+import BeforeAfter from '../../components/projects/BeforeAfter.astro';
+import Button from '../../components/primitives/Button.astro';
+import CallList from '../../components/contact/CallList.astro';
+import { getProjects, leadPhoto, renderProject, type Project } from '../../lib/content';
+import { breadcrumbSchema } from '../../lib/seo/schema';
+import { quoteHref } from '../../data/navigation';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project, i) => ({
+    params: { slug: project.slug },
+    props: { project, next: projects.length > 1 ? projects[(i + 1) % projects.length] : undefined },
+  }));
+}
+
+interface Props {
+  project: Project;
+  next?: Project;
+}
+
+const { project, next } = Astro.props;
+const { data } = project;
+const { Content } = await renderProject(project);
+
+const hero = leadPhoto(project);
+// The lead photo is shown large at the top; the gallery holds the rest.
+const gallery = data.gallery.filter((photo) => photo.src !== hero?.src);
+const hasBody = Boolean(project.entry.body?.trim());
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Work', url: '/projects/' },
+    { name: data.title, url: project.url },
+  ]),
+];
+---
+
+<Base
+  title={data.title}
+  description={data.summary ?? `${data.title}, a metal roofing project by ENJ Metal Roofing.`}
+  noindex={project.isFixture}
+  {schemas}
+>
+  <section class="border-b border-line bg-paper">
+    <div class="container-page pb-12 pt-10 sm:pb-16 sm:pt-14">
+      <nav aria-label="Breadcrumb" class="mb-10 sm:mb-14">
+        <ol class="label flex flex-wrap items-center gap-x-2 text-muted">
+          <li><a href="/" class="inline-block py-2 hover:text-ink">Home</a></li>
+          <li class="flex items-center gap-x-2">
+            <span aria-hidden="true" class="opacity-50">/</span>
+            <a href="/projects/" class="inline-block py-2 hover:text-ink">Work</a>
+          </li>
+        </ol>
+      </nav>
+
+      {
+        project.isFixture && (
+          <p data-review-only class="label mb-8 inline-block bg-ink px-3 py-2 text-paper">
+            Development fixture. Not ENJ work.
+          </p>
+        )
+      }
+
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end lg:gap-20">
+        <div>
+          <h1 class="t-display max-w-[16ch] text-5xl">{data.title}</h1>
+          {data.summary && <p class="t-lead mt-7 max-w-[54ch] text-muted">{data.summary}</p>}
+        </div>
+        <ProjectMeta project={project} layout="stack" />
+      </div>
+    </div>
+  </section>
+
+  {
+    hero && (
+      <div class="bg-paper">
+        <div class="container-page pt-6 sm:pt-8">
+          <Photo src={hero.src} alt={hero.alt} use="full" priority fixture={project.isFixture} class="settle" />
+          {hero.caption && <p class="mt-3 text-sm text-muted">{hero.caption}</p>}
+        </div>
+      </div>
+    )
+  }
+
+  <section class="bg-paper py-(--spacing-section)">
+    <div class="container-page space-y-20 sm:space-y-28">
+      {
+        (hasBody || data.scope.length > 0) && (
+          <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:gap-20">
+            {data.scope.length > 0 ? (
+              <div>
+                <h2 class="t-title text-xl">What the job involved</h2>
+                <ul class="mt-6 divide-y divide-line border-y border-line">
+                  {data.scope.map((item) => (
+                    <li class="py-3.5">{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div />
+            )}
+            {hasBody && (
+              <div class="prose-enj max-w-prose">
+                <Content />
+              </div>
+            )}
+          </div>
+        )
+      }
+
+      {
+        data.beforeAfter.length > 0 && (
+          <div>
+            <h2 class="t-headline text-3xl">Before and after</h2>
+            <div class="mt-10 space-y-14">
+              {data.beforeAfter.map((pair) => (
+                <BeforeAfter {...pair} fixture={project.isFixture} />
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      {
+        gallery.length > 0 && (
+          <div>
+            <h2 class="t-headline text-3xl">Photographs</h2>
+            <div class="mt-10">
+              <Gallery photos={gallery} fixture={project.isFixture} id={`gallery-${project.slug}`} />
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="bg-ink py-(--spacing-section) text-paper">
+    <div class="container-page grid gap-12 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:items-end lg:gap-20">
+      <div>
+        <h2 class="t-headline max-w-[18ch] text-4xl">Planning something similar?</h2>
+        <p class="t-lead mt-6 max-w-[46ch] text-muted-dark">
+          Send the details or call directly. Quotes are free.
+        </p>
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+          <Button href={quoteHref}>Get a free quote</Button>
+          {next && (
+            <Button href={next.url} variant="secondary-dark">
+              Next project
+            </Button>
+          )}
+        </div>
+      </div>
+      <CallList />
+    </div>
+  </section>
+</Base>

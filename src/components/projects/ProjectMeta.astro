@@ -1,0 +1,59 @@
+---
+/** Facts about a project. Only fields with a value render; nothing is ever filled in. */
+import type { Project } from '../../lib/content';
+import { formatCompleted, getServices, projectLocation } from '../../lib/content';
+
+interface Props {
+  project: Project;
+  layout?: 'row' | 'stack';
+  tone?: 'ink' | 'paper';
+  class?: string;
+}
+
+const { project, layout = 'row', tone = 'paper', class: className } = Astro.props;
+const { data } = project;
+
+const services = await getServices();
+const service = services.find((s) => s.id === data.service?.id);
+
+const items = [
+  { label: 'Location', value: projectLocation(project) },
+  { label: 'Service', value: service?.data.shortTitle ?? service?.data.title, href: service && `/services/${service.id}/` },
+  { label: 'Completed', value: formatCompleted(data.completed) },
+  { label: 'Profile', value: data.roof?.profile },
+  { label: 'Material', value: data.roof?.material },
+  { label: 'Colour', value: data.roof?.colour },
+].filter((item) => Boolean(item.value));
+
+const muted = tone === 'ink' ? 'text-muted-dark' : 'text-muted';
+const line = tone === 'ink' ? 'border-line-dark' : 'border-line';
+---
+
+{
+  items.length > 0 && (
+    <dl
+      class:list={[
+        layout === 'row'
+          ? 'grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3 lg:flex lg:flex-wrap lg:gap-x-12'
+          : `divide-y border-y ${line}`,
+        layout === 'stack' && (tone === 'ink' ? 'divide-line-dark' : 'divide-line'),
+        className,
+      ]}
+    >
+      {items.map((item) => (
+        <div class:list={[layout === 'stack' && 'flex items-baseline justify-between gap-6 py-4']}>
+          <dt class:list={['label', muted]}>{item.label}</dt>
+          <dd class:list={['text-sm font-semibold', layout === 'row' && 'mt-2.5', layout === 'stack' && 'text-right']}>
+            {item.href ? (
+              <a href={item.href} class="link link-static">
+                {item.value}
+              </a>
+            ) : (
+              item.value
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  )
+}

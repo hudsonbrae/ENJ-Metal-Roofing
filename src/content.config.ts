@@ -1,102 +1,122 @@
-import { defineCollection, reference, z } from 'astro:content';
+import { defineCollection, reference, z, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-/* ═══════════════════════════════════════════════════════════════
-   CONTENT MODEL
+/* Content model.
 
-   Design rule: every descriptive field is OPTIONAL.
+   Rule: every descriptive field is optional. Templates render a field only
+   when it has a value, so an unknown suburb produces a project page with no
+   location line rather than a placeholder. No required field exists that
+   could tempt someone to fill a gap with a guess.
 
-   Templates render a field only when it exists, so an unknown
-   suburb produces a project page with no location line — which
-   reads as deliberate, not incomplete. This makes fabrication
-   structurally impossible rather than merely discouraged: there
-   is no required field that could tempt a placeholder value.
+   Real ENJ content lives in src/content/. Development fixtures live in
+   src/fixtures/ as a separate collection and are only merged in review mode
+   (see src/lib/content.ts). A launch build refuses to ship them
+   (scripts/check-launch-build.mjs). */
 
-   `testimonials` and `serviceAreas` intentionally ship with zero
-   entries. Their sections do not render while empty and appear
-   automatically once real content exists.
-   ═══════════════════════════════════════════════════════════════ */
+const photo = (image: SchemaContext['image']) =>
+  z.object({
+    src: image(),
+    /** Describe what is in the photo. Required: every image needs alt text. */
+    alt: z.string().min(1),
+    caption: z.string().optional(),
+  });
 
-const imageRole = z.enum([
-  'hero',    // 16:9 desktop / 4:5 mobile — leads the project
-  'wide',    // full-bleed context shot
-  'detail',  // macro: seam, flashing, ridge, valley — workmanship evidence
-  'before',
-  'during',
-  'after',
-]);
+const projectSchema = ({ image }: SchemaContext) =>
+  z.object({
+    title: z.string(),
+    /** The service this job falls under. Links the project to its service page. */
+    service: reference('services').optional(),
+    /** One or two factual sentences. No superlatives. */
+    summary: z.string().optional(),
+
+    location: z
+      .object({
+        suburb: z.string().optional(),
+        state: z.string().optional(),
+      })
+      .optional(),
+    /** "2026" or "2026-09". Only if known. */
+    completed: z
+      .string()
+      .regex(/^\d{4}(-(0[1-9]|1[0-2]))?$/, 'Use YYYY or YYYY-MM')
+      .optional(),
+    status: z.enum(['complete', 'in-progress']).default('complete'),
+
+    roof: z
+      .object({
+        /** e.g. Corrugated, Trimdek, Klip-Lok */
+        profile: z.string().optional(),
+        /** e.g. COLORBOND steel, COLORBOND Ultra, Zincalume */
+        material: z.string().optional(),
+        /** e.g. Surfmist, Monument */
+        colour: z.string().optional(),
+      })
+      .optional(),
+    /** Factual list of the work done. */
+    scope: z.array(z.string()).default([]),
+
+    /** Leads the project. Falls back to the first gallery photo. */
+    hero: photo(image).optional(),
+    gallery: z
+      .array(
+        photo(image).extend({
+          /** wide: the whole roof in context. detail: close-up workmanship. during: work underway. */
+          kind: z.enum(['wide', 'detail', 'during']).default('wide'),
+        }),
+      )
+      .default([]),
+    beforeAfter: z
+      .array(
+        z.object({
+          before: photo(image),
+          after: photo(image),
+          caption: z.string().optional(),
+        }),
+      )
+      .default([]),
+
+    /** Featured projects lead the homepage and the work page. */
+    featured: z.boolean().default(false),
+    /** Lower numbers sort first. */
+    order: z.number().default(100),
+  });
 
 const projects = defineCollection({
   loader: glob({
-    pattern: '**/index.md',
+    pattern: '*/index.md',
     base: './src/content/projects',
     generateId: ({ entry }) => entry.replace(/\/index\.md$/, ''),
   }),
-  schema: ({ image }) =>
-    z.object({
-      // ── Required: structural only, never descriptive ──
-      title: z.string(),
-      status: z.enum(['complete', 'in-progress']),
-      type: z.enum([
-        're-roof',
-        'new-construction',
-        'repair',
-        'gutters-fascia',
-        'other',
-      ]),
+  schema: projectSchema,
+});
 
-      // ── Optional: rendered only when verified ──
-      suburb: z.string().optional(),
-      state: z.string().optional(),
-      year: z.number().int().optional(),
-      /** e.g. 'Corrugated', 'Trimdek', 'Klip-Lok' */
-      roofProfile: z.string().optional(),
-      /** e.g. 'COLORBOND steel' */
-      material: z.string().optional(),
-      /** e.g. 'Surfmist' */
-      colour: z.string().optional(),
-      /** Factual work items, not marketing claims */
-      scope: z.array(z.string()).optional(),
-      summary: z.string().optional(),
-
-      images: z
-        .array(
-          z.object({
-            src: image(),
-            alt: z.string(),
-            role: imageRole,
-            caption: z.string().optional(),
-          }),
-        )
-        .default([]),
-
-      featured: z.boolean().default(false),
-      order: z.number().default(0),
-    }),
+/** Development fixtures. Same shape as projects, never real ENJ work. */
+const projectFixtures = defineCollection({
+  loader: glob({
+    pattern: '*/index.md',
+    base: './src/fixtures/projects',
+    generateId: ({ entry }) => entry.replace(/\/index\.md$/, ''),
+  }),
+  schema: projectSchema,
 });
 
 const services = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/services' }),
+  loader: glob({ pattern: '*.md', base: './src/content/services' }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      /** Short form for nav and indices */
+      /** Short form for navigation. */
       shortTitle: z.string().optional(),
       summary: z.string(),
-      /** Factual description of what the work involves */
-      includes: z.array(z.string()).optional(),
-      suitableFor: z.array(z.string()).optional(),
-      image: image().optional(),
-      imageAlt: z.string().optional(),
-      relatedProjects: z.array(reference('projects')).default([]),
-      order: z.number().default(0),
+      /** Factual description of what the work involves. */
+      includes: z.array(z.string()).default([]),
+      suitableFor: z.array(z.string()).default([]),
+      image: photo(image).optional(),
+      order: z.number().default(100),
       /**
-       * TRUE until ENJ confirms they offer this service.
-       *
-       * Draft services still render — the site would otherwise have no
-       * services at all before confirmation — but the build prints a
-       * warning listing every unconfirmed entry, and this flag is the
-       * single greppable marker for what still needs sign-off.
+       * True until ENJ confirms they offer this service.
+       * Review mode shows drafts with an "awaiting confirmation" marker;
+       * launch mode leaves them out of pages, navigation and the sitemap.
        */
       draft: z.boolean().default(true),
     }),
@@ -104,45 +124,42 @@ const services = defineCollection({
 
 /** Empty until ENJ supplies genuine, attributable reviews. */
 const testimonials = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/testimonials' }),
+  loader: glob({ pattern: '*.md', base: './src/content/testimonials' }),
   schema: z.object({
     quote: z.string(),
     author: z.string(),
     suburb: z.string().optional(),
     date: z.coerce.date().optional(),
     source: z.enum(['google', 'facebook', 'direct']),
-    /** Must be true to render. Guards against unverified quotes. */
+    /** Must be true to render. */
     verified: z.boolean().default(false),
-    relatedProject: reference('projects').optional(),
+    project: reference('projects').optional(),
   }),
 });
 
 /**
- * Empty by design. Area pages are only created where ENJ has genuinely
- * worked — never generated across a suburb list for SEO. Thin, duplicated
- * location pages are both dishonest and actively penalised by Google.
+ * Empty by design. An area page exists only where ENJ confirms it works,
+ * never generated from a suburb list for SEO.
  */
 const serviceAreas = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/service-areas' }),
+  loader: glob({ pattern: '*.md', base: './src/content/service-areas' }),
   schema: z.object({
     suburb: z.string(),
     state: z.string().default('NSW'),
     postcode: z.string().optional(),
-    /** Straight-line distance context, only if meaningful */
-    intro: z.string().optional(),
-    relatedProjects: z.array(reference('projects')).default([]),
-    order: z.number().default(0),
+    order: z.number().default(100),
   }),
 });
 
+/** Questions ENJ actually gets asked. The markdown body is the answer. */
 const faqs = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/faqs' }),
+  loader: glob({ pattern: '*.md', base: './src/content/faqs' }),
   schema: z.object({
     question: z.string(),
-    order: z.number().default(0),
-    /** Surfaces in FAQPage structured data */
-    schema: z.boolean().default(true),
+    order: z.number().default(100),
+    /** Unconfirmed answers show in review mode only. */
+    draft: z.boolean().default(true),
   }),
 });
 
-export const collections = { projects, services, testimonials, serviceAreas, faqs };
+export const collections = { projects, projectFixtures, services, testimonials, serviceAreas, faqs };

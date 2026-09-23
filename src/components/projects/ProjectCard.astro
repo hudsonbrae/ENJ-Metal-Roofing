@@ -1,0 +1,47 @@
+---
+import Photo from '../media/Photo.astro';
+import AssetSlot from '../media/AssetSlot.astro';
+import { leadPhoto, projectLocation, formatCompleted, type Project, type Photo as PhotoType } from '../../lib/content';
+
+interface Props {
+  project: Project;
+  /** feature: full-width lead card. standard: half-width grid card. */
+  size?: 'feature' | 'standard';
+  headingLevel?: 'h2' | 'h3';
+  /** Show a specific photo instead of the project's lead photo. */
+  photo?: PhotoType;
+}
+
+const { project, size = 'standard', headingLevel = 'h3', photo: override } = Astro.props;
+const photo = override ?? leadPhoto(project);
+const meta = [projectLocation(project), formatCompleted(project.data.completed)].filter(Boolean);
+const Heading = headingLevel;
+const feature = size === 'feature';
+---
+
+<article class="group relative">
+  {
+    photo ? (
+      <Photo
+        src={photo.src}
+        alt={photo.alt}
+        use={feature ? 'feature' : 'card'}
+        ratio={feature ? '16/9' : '4/3'}
+        fixture={project.isFixture}
+        reveal
+        imgClass="transition-transform duration-700 ease-expo group-hover:scale-[1.025]"
+      />
+    ) : (
+      <AssetSlot role="Project photo" ratio={feature ? '16/9' : '4/3'} brief="Lead photograph for this project." />
+    )
+  }
+  <div class:list={['mt-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2', feature && 'sm:mt-7']}>
+    <Heading class:list={['t-title', feature ? 'text-3xl' : 'text-2xl']}>
+      <a href={project.url} class="after:absolute after:inset-0 after:content-['']">
+        <span class="link">{project.data.title}</span>
+      </a>
+    </Heading>
+    {meta.length > 0 && <p class="label text-muted">{meta.join(', ')}</p>}
+  </div>
+  {feature && project.data.summary && <p class="mt-3 max-w-[60ch] text-muted">{project.data.summary}</p>}
+</article>

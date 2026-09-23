@@ -1,0 +1,32 @@
+---
+/**
+ * A before-and-after pair from one job. Side by side on wider screens,
+ * stacked on phones, with the labels beneath rather than over the photos.
+ * Both photos are cropped to the same ratio so the comparison is fair.
+ */
+import Photo from '../media/Photo.astro';
+import type { Photo as PhotoType } from '../../lib/content';
+
+interface Props {
+  before: PhotoType;
+  after: PhotoType;
+  caption?: string;
+  fixture?: boolean;
+}
+
+const { before, after, caption, fixture = false } = Astro.props;
+---
+
+<figure class="m-0">
+  <div class="grid gap-4 sm:grid-cols-2 sm:gap-5">
+    <div>
+      <Photo src={before.src} alt={before.alt} use="card" ratio="4/3" fixture={fixture} reveal />
+      <p class="label mt-3 text-muted">Before</p>
+    </div>
+    <div>
+      <Photo src={after.src} alt={after.alt} use="card" ratio="4/3" fixture={fixture} reveal />
+      <p class="label mt-3 text-red">After</p>
+    </div>
+  </div>
+  {caption && <figcaption class="mt-4 max-w-[60ch] text-sm text-muted">{caption}</figcaption>}
+</figure>

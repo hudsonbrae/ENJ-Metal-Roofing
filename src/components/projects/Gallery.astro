@@ -1,0 +1,189 @@
+---
+/**
+ * Project gallery with a lightbox.
+ *
+ * Layout: photos keep their own proportions in a two-column flow, with
+ * wide shots spanning both columns, so a set of mixed portrait, landscape
+ * and square photos reads as edited rather than cropped to one ratio.
+ * Each photo opens a native <dialog> lightbox (keyboard, Escape, arrows).
+ */
+import { getImage } from 'astro:assets';
+import Photo from '../media/Photo.astro';
+import type { Photo as PhotoType } from '../../lib/content';
+
+interface Item extends PhotoType {
+  kind?: 'wide' | 'detail' | 'during';
+}
+
+interface Props {
+  photos: Item[];
+  fixture?: boolean;
+  /** Unique per page, so two galleries can share a page. */
+  id: string;
+}
+
+const { photos, fixture = false, id } = Astro.props;
+
+const items = await Promise.all(
+  photos.map(async (photo) => {
+    const large = await getImage({ src: photo.src, width: Math.min(2200, photo.src.width), format: 'webp', quality: 80 });
+    const landscape = photo.src.width / photo.src.height > 1.45;
+    return { ...photo, large: large.src, span: photo.kind === 'wide' || landscape };
+  }),
+);
+---
+
+{
+  items.length > 0 && (
+    <div data-gallery={id}>
+      <ul class="grid gap-4 sm:grid-cols-2 sm:gap-5">
+        {items.map((item, index) => (
+          <li class:list={[item.span && 'sm:col-span-2']}>
+            <figure class="m-0">
+              <button
+                type="button"
+                class="group relative block w-full cursor-zoom-in overflow-hidden text-left"
+                data-open={index}
+                data-src={item.large}
+                data-alt={item.alt}
+                data-caption={item.caption ?? ''}
+                aria-label={`Enlarge photo: ${item.alt}`}
+              >
+                <Photo
+                  src={item.src}
+                  alt={item.alt}
+                  use={item.span ? 'feature' : 'card'}
+                  fixture={fixture}
+                  reveal
+                  imgClass="transition-transform duration-700 ease-expo group-hover:scale-[1.02]"
+                />
+              </button>
+              {item.caption && <figcaption class="mt-3 text-sm text-muted">{item.caption}</figcaption>}
+            </figure>
+          </li>
+        ))}
+      </ul>
+
+      <dialog class="lightbox m-0 h-dvh max-h-none w-full max-w-none bg-ink-950 p-0 text-paper" aria-label="Photo viewer">
+        <div class="flex h-full flex-col">
+          <div class="container-page flex h-(--header-h) shrink-0 items-center justify-between">
+            <p class="label tabular text-muted-dark" data-counter aria-live="polite"></p>
+            <button type="button" class="-mr-2 flex min-h-11 items-center gap-3 px-2" data-close>
+              <span class="label">Close</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M1 1l14 14M15 1L1 15" stroke="currentColor" stroke-width="1.5" />
+              </svg>
+            </button>
+          </div>
+          <figure class="relative m-0 flex min-h-0 flex-1 flex-col items-center justify-center px-4 sm:px-20">
+            {/* Starts on the first photo; lazy, so nothing loads until the viewer opens. */}
+            <img
+              data-image
+              src={items[0].large}
+              alt={items[0].alt}
+              loading="lazy"
+              decoding="async"
+              class="max-h-full w-auto max-w-full object-contain"
+            />
+            <figcaption data-caption class="mt-4 min-h-6 text-center text-sm text-muted-dark"></figcaption>
+            {items.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  class="absolute left-2 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center text-paper hover:text-rose sm:left-6"
+                  data-prev
+                  aria-label="Previous photo"
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M13 3L6 10l7 7" fill="none" stroke="currentColor" stroke-width="1.5" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="absolute right-2 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center text-paper hover:text-rose sm:right-6"
+                  data-next
+                  aria-label="Next photo"
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M7 3l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5" />
+                  </svg>
+                </button>
+              </>
+            )}
+          </figure>
+          <div class="h-8 shrink-0" />
+        </div>
+      </dialog>
+    </div>
+  )
+}
+
+<style>
+  .lightbox {
+    opacity: 0;
+    transition:
+      opacity 250ms var(--ease-standard),
+      overlay 250ms allow-discrete,
+      display 250ms allow-discrete;
+  }
+  .lightbox[open] {
+    opacity: 1;
+  }
+  @starting-style {
+    .lightbox[open] {
+      opacity: 0;
+    }
+  }
+  .lightbox::backdrop {
+    background: transparent;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
+    const dialog = gallery.querySelector<HTMLDialogElement>('dialog');
+    const image = gallery.querySelector<HTMLImageElement>('[data-image]');
+    const caption = gallery.querySelector<HTMLElement>('[data-caption]');
+    const counter = gallery.querySelector<HTMLElement>('[data-counter]');
+    const triggers = [...gallery.querySelectorAll<HTMLButtonElement>('[data-open]')];
+    if (!dialog || !image || triggers.length === 0) return;
+
+    let current = 0;
+    let opener: HTMLElement | null = null;
+
+    const show = (index: number) => {
+      current = (index + triggers.length) % triggers.length;
+      const trigger = triggers[current];
+      image.src = trigger.dataset.src ?? '';
+      image.alt = trigger.dataset.alt ?? '';
+      if (caption) caption.textContent = trigger.dataset.caption ?? '';
+      if (counter) counter.textContent = `${current + 1} of ${triggers.length}`;
+    };
+
+    triggers.forEach((trigger, index) =>
+      trigger.addEventListener('click', () => {
+        opener = trigger;
+        show(index);
+        dialog.showModal();
+        document.body.style.overflow = 'hidden';
+      }),
+    );
+
+    gallery.querySelector('[data-prev]')?.addEventListener('click', () => show(current - 1));
+    gallery.querySelector('[data-next]')?.addEventListener('click', () => show(current + 1));
+    gallery.querySelector('[data-close]')?.addEventListener('click', () => dialog.close());
+
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') show(current - 1);
+      if (event.key === 'ArrowRight') show(current + 1);
+    });
+    // A click on the dark surround, not the photo or controls, closes it.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog || (event.target as HTMLElement).tagName === 'FIGURE') dialog.close();
+    });
+    dialog.addEventListener('close', () => {
+      document.body.style.overflow = '';
+      opener?.focus();
+    });
+  });
+</script>
