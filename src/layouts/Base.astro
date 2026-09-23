@@ -1,9 +1,10 @@
-﻿---
+---
 import '../styles/global.css';
 import Seo from '../components/Seo.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import MobileActionBar from '../components/layout/MobileActionBar.astro';
+import ReviewBanner from '../components/review/ReviewBanner.astro';
 
 interface Props {
   title: string;
@@ -11,9 +12,11 @@ interface Props {
   image?: string;
   noindex?: boolean;
   schemas?: unknown[];
+  /** The sticky mobile call/quote bar. Off on pages that are already the quote flow. */
+  actionBar?: boolean;
 }
 
-const { title, description, image, noindex, schemas } = Astro.props;
+const { title, description, image, noindex, schemas, actionBar = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,32 +26,40 @@ const { title, description, image, noindex, schemas } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
-    {/* Single variable font carries the whole system — preloaded to avoid
-        a late swap on the hero headline. */}
-    <link
-      rel="preload"
-      href="/fonts/archivo-var.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
+    {/* Runs before first paint. Motion only engages with JavaScript and a
+        no-preference motion setting; otherwise everything renders static. */}
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+        root.classList.add('motion-ok');
+        // If the reveal script never arrives, show everything rather than
+        // leave content hidden.
+        setTimeout(function () {
+          if (!root.classList.contains('motion-ready')) root.classList.remove('motion-ok');
+        }, 2500);
+      })();
+    </script>
 
-    <link rel="icon" href="/brand/favicon-512.png" type="image/png" />
+    <link rel="preload" href="/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin />
+
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/brand/favicon-512.png" type="image/png" sizes="512x512" />
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
     <meta name="theme-color" content="#290B0D" />
 
     <Seo {title} {description} {image} {noindex} {schemas} />
   </head>
 
-  <body class="pb-[68px] lg:pb-0">
+  <body class:list={[actionBar && 'pb-16 lg:pb-0']}>
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-sm focus:bg-cta focus:px-5 focus:py-3 focus:text-xs focus:uppercase focus:text-white"
-      style="font-stretch:88%;font-weight:600;letter-spacing:var(--tracking-wider)"
+      class="btn btn-primary btn-sm sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70]"
     >
       Skip to content
     </a>
 
+    <ReviewBanner />
     <Header />
 
     <main id="main">
@@ -56,6 +67,30 @@ const { title, description, image, noindex, schemas } = Astro.props;
     </main>
 
     <Footer />
-    <MobileActionBar />
+    {actionBar && <MobileActionBar />}
+
+    {/* Scroll reveals. One observer for the whole page; elements are
+        revealed once and then released. */}
+    <script>
+      const root = document.documentElement;
+      if (root.classList.contains('motion-ok') && 'IntersectionObserver' in window) {
+        root.classList.add('motion-ready');
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-in');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        document
+          .querySelectorAll('.reveal, .reveal-rule, .reveal-image')
+          .forEach((el) => observer.observe(el));
+      } else {
+        root.classList.remove('motion-ok');
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/layout/PageHeader.astro';
+import CallList from '../../components/contact/CallList.astro';
+import QuoteForm from '../../components/contact/QuoteForm.astro';
+import { breadcrumbSchema } from '../../lib/seo/schema';
+import { site } from '../../data/site';
+
+const schemas = [
+  breadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Contact', url: '/contact/' },
+  ]),
+];
+---
+
+<Base
+  title="Get a Free Roofing Quote"
+  description={`Ask ENJ Metal Roofing in ${site.base.suburb} for a free quote. Call John or Ethan, or send the details of your roof through the form.`}
+  {schemas}
+  actionBar={false}
+>
+  <PageHeader
+    title="Get a free quote"
+    intro="Tell us where the property is and what needs doing. Or call John or Ethan directly."
+    trail={[{ label: 'Contact', href: '/contact/' }]}
+  >
+    <CallList slot="aside" />
+  </PageHeader>
+
+  <section class="bg-paper py-(--spacing-section)">
+    <div class="container-page">
+      <div class="grid gap-16 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-20">
+        <div>
+          <h2 class="t-headline text-3xl">Send the details</h2>
+          <p class="mt-4 max-w-[50ch] text-muted">
+            Six fields, four of them required. Quotes are free and there is no obligation.
+          </p>
+          <QuoteForm class="mt-10" />
+        </div>
+
+        <aside class="lg:pt-2" aria-labelledby="other-ways">
+          <h2 id="other-ways" class="t-title text-xl">Other ways to reach ENJ</h2>
+          <dl class="mt-6 divide-y divide-line border-y border-line">
+            <div class="py-5">
+              <dt class="label text-muted">Email</dt>
+              <dd class="mt-2.5">
+                <a href={`mailto:${site.email}`} class="link link-static break-all">{site.email}</a>
+              </dd>
+            </div>
+            <div class="py-5">
+              <dt class="label text-muted">Based in</dt>
+              <dd class="mt-2.5">{site.base.suburb}, {site.base.state} {site.base.postcode}</dd>
+            </div>
+            <div class="py-5">
+              <dt class="label text-muted">Instagram</dt>
+              <dd class="mt-2.5">
+                <a href={site.social.instagram} target="_blank" rel="me noopener" class="link link-static">
+                  {site.social.instagramHandle}
+                </a>
+              </dd>
+            </div>
+          </dl>
+          <p class="mt-6 text-sm text-muted">
+            Photos of the roof help with a quote. You can email them to{' '}
+            <a href={`mailto:${site.email}`} class="link link-static">{site.email}</a>.
+          </p>
+        </aside>
+      </div>
+    </div>
+  </section>
+</Base>

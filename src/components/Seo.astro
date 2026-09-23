@@ -1,15 +1,16 @@
 ---
 import { site } from '../data/site';
+import { noindexSite } from '../lib/mode';
 import { businessSchema, websiteSchema } from '../lib/seo/schema';
 
 interface Props {
-  /** Page title, without the brand suffix — required, so no page can ship untitled. */
+  /** Page title without the brand suffix. Required, so no page ships untitled. Aim for under 40 characters. */
   title: string;
-  /** Meta description — required for the same reason. */
+  /** Meta description. Required for the same reason. Aim for 120-155 characters. */
   description: string;
   image?: string;
   noindex?: boolean;
-  /** Extra JSON-LD blocks for this page (Service, Breadcrumb, FAQPage…). */
+  /** Extra JSON-LD blocks for this page (Service, BreadcrumbList, FAQPage). */
   schemas?: unknown[];
 }
 
@@ -18,16 +19,17 @@ const { title, description, image, noindex = false, schemas = [] } = Astro.props
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const ogImage = new URL(image ?? '/brand/enj-og.jpg', Astro.site).toString();
 const fullTitle = `${title} | ${site.name}`;
+const robots = noindex || noindexSite ? 'noindex, nofollow' : undefined;
 
-// Site-wide graphs render once, on every page, keyed by @id so Google
-// resolves them to a single business entity.
+// Site-wide graphs render on every page, keyed by @id so Google resolves
+// them to a single business entity.
 const graphs = [businessSchema(), websiteSchema(), ...schemas].filter(Boolean);
 ---
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+{robots && <meta name="robots" content={robots} />}
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content={site.name} />
@@ -47,8 +49,4 @@ const graphs = [businessSchema(), websiteSchema(), ...schemas].filter(Boolean);
 <meta name="geo.region" content="AU-NSW" />
 <meta name="geo.placename" content={site.base.suburb} />
 
-{
-  graphs.map((graph) => (
-    <script type="application/ld+json" set:html={JSON.stringify(graph)} />
-  ))
-}
+{graphs.map((graph) => <script type="application/ld+json" set:html={JSON.stringify(graph)} />)}

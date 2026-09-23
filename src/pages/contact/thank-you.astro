@@ -1,0 +1,51 @@
+---
+/**
+ * Where every successful quote request lands, with or without JavaScript.
+ * One URL per conversion: when analytics is added, a goal on this path
+ * (or the data-conversion attribute below) counts quote requests.
+ * Excluded from search results and the sitemap.
+ */
+import Base from '../../layouts/Base.astro';
+import Button from '../../components/primitives/Button.astro';
+import CallList from '../../components/contact/CallList.astro';
+import { site } from '../../data/site';
+
+const names = site.contacts.map((c) => c.name).join(' and ');
+---
+
+<Base
+  title="Enquiry received"
+  description="Your quote request has been sent to ENJ Metal Roofing."
+  noindex
+  actionBar={false}
+>
+  <section class="bg-ink text-paper" data-conversion="quote-request">
+    <div class="container-page grid gap-14 pb-(--spacing-section) pt-16 sm:pt-24 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-end lg:gap-20">
+      <div>
+        <p class="label text-crimson">Enquiry received</p>
+        <h1 class="t-display mt-7 max-w-[14ch] text-5xl">Thanks. It's with {names}.</h1>
+        <p class="t-lead mt-7 max-w-[48ch] text-muted-dark">
+          They'll be in touch on the number you gave to talk through the job. If it's urgent,
+          a phone call is the quickest way to reach them.
+        </p>
+      </div>
+      <CallList />
+    </div>
+  </section>
+
+  <section class="bg-paper py-(--spacing-section)">
+    <div class="container-page flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h2 class="t-headline text-3xl">While you wait</h2>
+        <p class="mt-4 max-w-[46ch] text-muted">
+          Photos of the roof help with a quote. Email them to
+          <a href={`mailto:${site.email}`} class="link link-static text-red">{site.email}</a>.
+        </p>
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <Button href="/projects/" variant="secondary">See recent work</Button>
+        <Button href="/" variant="secondary">Back to home</Button>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,238 @@
+---
+/**
+ * The quote form. Works in two ways:
+ *   Without JavaScript: native validation, normal POST, redirect to the
+ *   thank-you or not-sent page.
+ *   With JavaScript: inline validation, submit without leaving the page,
+ *   errors shown next to the field without losing what was typed. Success
+ *   still lands on /contact/thank-you/ so the conversion has one URL.
+ */
+import Button from '../primitives/Button.astro';
+import { site } from '../../data/site';
+import { QUOTE_ENDPOINT } from '../../lib/leads/routes';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+
+// What the customer needs, in their words. Not a list of claimed services.
+const workTypes = [
+  'Replace an existing roof',
+  'New roof (new build or extension)',
+  'Repair or leak',
+  'Gutters, fascia or downpipes',
+  'Not sure yet',
+];
+
+const field =
+  'block w-full rounded-sm border border-line bg-white px-4 py-3.5 text-base text-ink ' +
+  'transition-colors placeholder:text-muted hover:border-muted/50 focus:border-ink ' +
+  'focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson ' +
+  'aria-invalid:border-red';
+---
+
+<form method="POST" action={QUOTE_ENDPOINT} data-quote-form class:list={['space-y-7', className]}>
+  {/* Spam traps: invisible to people. */}
+  <div class="absolute -left-[9999px]" aria-hidden="true">
+    <label for="company">Leave this empty</label>
+    <input type="text" id="company" name="company" tabindex="-1" autocomplete="off" />
+  </div>
+  <input type="hidden" name="started" value="" data-started />
+
+  <div
+    data-form-error
+    role="alert"
+    class="hidden border-l-2 border-red bg-paper-2 p-5 text-sm leading-relaxed"
+    tabindex="-1"
+  >
+    <p class="font-semibold">The enquiry did not send.</p>
+    <p class="mt-1 text-muted">
+      Your details are still here, so you can try again. Or call {site.contacts[0].name} on
+      <a href={`tel:${site.contacts[0].phone}`} class="link link-static text-red">{site.contacts[0].display}</a>.
+    </p>
+  </div>
+
+  <div class="grid gap-7 sm:grid-cols-2">
+    <div data-field>
+      <label for="name" class="label mb-2.5 block">Name <span class="text-red" aria-hidden="true">*</span></label>
+      <input id="name" name="name" type="text" required autocomplete="name" class={field} />
+      <p class="mt-2 hidden text-sm text-red" data-error-for="name"></p>
+    </div>
+    <div data-field>
+      <label for="phone" class="label mb-2.5 block">Phone <span class="text-red" aria-hidden="true">*</span></label>
+      <input
+        id="phone"
+        name="phone"
+        type="tel"
+        required
+        minlength="8"
+        autocomplete="tel"
+        inputmode="tel"
+        class={field}
+        aria-describedby="phone-hint"
+      />
+      <p id="phone-hint" class="mt-2 text-sm text-muted">Mobile or landline. We'll call you back on it.</p>
+      <p class="mt-2 hidden text-sm text-red" data-error-for="phone"></p>
+    </div>
+  </div>
+
+  <div class="grid gap-7 sm:grid-cols-2">
+    <div data-field>
+      <label for="suburb" class="label mb-2.5 block">
+        Property suburb <span class="text-red" aria-hidden="true">*</span>
+      </label>
+      <input id="suburb" name="suburb" type="text" required minlength="2" autocomplete="address-level2" class={field} />
+      <p class="mt-2 hidden text-sm text-red" data-error-for="suburb"></p>
+    </div>
+    <div data-field>
+      <label for="email" class="label mb-2.5 block">Email <span class="text-muted normal-case tracking-normal">(optional)</span></label>
+      <input id="email" name="email" type="email" autocomplete="email" class={field} />
+      <p class="mt-2 hidden text-sm text-red" data-error-for="email"></p>
+    </div>
+  </div>
+
+  <div data-field>
+    <label for="workType" class="label mb-2.5 block">
+      What do you need? <span class="text-red" aria-hidden="true">*</span>
+    </label>
+    <select id="workType" name="workType" required class={`${field} appearance-none bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22><path d=%22M1 1l5 5 5-5%22 fill=%22none%22 stroke=%22%23290b0d%22 stroke-width=%221.5%22/></svg>')] bg-[position:right_1rem_center] bg-no-repeat pr-10`}>
+      <option value="">Choose one</option>
+      {workTypes.map((type) => <option value={type}>{type}</option>)}
+    </select>
+    <p class="mt-2 hidden text-sm text-red" data-error-for="workType"></p>
+  </div>
+
+  <div data-field>
+    <label for="details" class="label mb-2.5 block">Details <span class="text-muted normal-case tracking-normal">(optional)</span></label>
+    <textarea
+      id="details"
+      name="details"
+      rows="5"
+      maxlength="4000"
+      class={field}
+      aria-describedby="details-hint"></textarea>
+    <p id="details-hint" class="mt-2 text-sm text-muted">
+      Anything useful: the roof's age or material, what you have noticed, or a leak's location.
+    </p>
+  </div>
+
+  <div class="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:gap-6">
+    <Button type="submit" size="lg" data-submit class="w-full sm:w-auto">
+      <span data-submit-label>Get a free quote</span>
+    </Button>
+    <p class="text-sm text-muted">
+      Fields marked <span class="text-red" aria-hidden="true">*</span><span class="sr-only">with an asterisk</span> are required.
+    </p>
+  </div>
+</form>
+
+<script>
+  import { THANK_YOU } from '../../lib/leads/routes';
+
+  const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
+
+  if (form) {
+    // Custom messages take over from the browser's popups once JS is running.
+    form.noValidate = true;
+    const started = form.querySelector<HTMLInputElement>('[data-started]');
+    if (started) started.value = String(Date.now());
+
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
+    const submitLabel = form.querySelector<HTMLElement>('[data-submit-label]');
+    const formError = form.querySelector<HTMLElement>('[data-form-error]');
+
+    const messages: Record<string, (el: HTMLInputElement) => string> = {
+      name: () => 'Enter your name.',
+      phone: () => 'Enter a phone number we can call you back on.',
+      suburb: () => 'Enter the suburb the property is in.',
+      email: () => 'Check the email address, or leave it empty.',
+      workType: () => 'Choose the type of work.',
+    };
+
+    const setError = (name: string, message: string | null) => {
+      const input = form.elements.namedItem(name) as HTMLInputElement | null;
+      const slot = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+      if (!input || !slot) return;
+      const hint = input.getAttribute('aria-describedby')?.replace(`${name}-error`, '').trim();
+      if (message) {
+        slot.id = `${name}-error`;
+        slot.textContent = message;
+        slot.classList.remove('hidden');
+        input.setAttribute('aria-invalid', 'true');
+        input.setAttribute('aria-describedby', [hint, slot.id].filter(Boolean).join(' '));
+      } else {
+        slot.textContent = '';
+        slot.classList.add('hidden');
+        input.removeAttribute('aria-invalid');
+        if (hint) input.setAttribute('aria-describedby', hint);
+        else input.removeAttribute('aria-describedby');
+      }
+    };
+
+    const validate = () => {
+      let first: HTMLElement | null = null;
+      for (const name of Object.keys(messages)) {
+        const input = form.elements.namedItem(name) as HTMLInputElement;
+        const valid = input.checkValidity();
+        setError(name, valid ? null : messages[name](input));
+        if (!valid && !first) first = input;
+      }
+      return first;
+    };
+
+    // Clear a field's error as soon as it becomes valid.
+    form.addEventListener('input', (event) => {
+      const input = event.target as HTMLInputElement;
+      if (input.getAttribute('aria-invalid') === 'true' && input.checkValidity()) setError(input.name, null);
+    });
+
+    const setBusy = (busy: boolean) => {
+      if (!submit || !submitLabel) return;
+      submit.disabled = busy;
+      submit.setAttribute('aria-disabled', String(busy));
+      submitLabel.textContent = busy ? 'Sending...' : 'Get a free quote';
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      formError?.classList.add('hidden');
+
+      const firstInvalid = validate();
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return;
+      }
+
+      setBusy(true);
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        const result = await response.json().catch(() => ({}));
+
+        if (response.ok && result.ok) {
+          window.location.assign(result.redirect ?? THANK_YOU);
+          return;
+        }
+
+        if (response.status === 422 && result.errors) {
+          let first: HTMLElement | null = null;
+          for (const [name, message] of Object.entries(result.errors as Record<string, string>)) {
+            setError(name, message);
+            first ??= form.elements.namedItem(name) as HTMLElement | null;
+          }
+          first?.focus();
+        } else {
+          throw new Error(`Unexpected response ${response.status}`);
+        }
+      } catch {
+        formError?.classList.remove('hidden');
+        formError?.focus();
+      }
+      setBusy(false);
+    });
+  }
+</script>

@@ -1,0 +1,36 @@
+---
+/**
+ * Shown only when the form was submitted without JavaScript and delivery or
+ * validation failed. (With JavaScript, errors appear inline on the form and
+ * nothing typed is lost.) Excluded from search results and the sitemap.
+ */
+import Base from '../../layouts/Base.astro';
+import Button from '../../components/primitives/Button.astro';
+import CallList from '../../components/contact/CallList.astro';
+import { site } from '../../data/site';
+---
+
+<Base
+  title="Enquiry not sent"
+  description="Your quote request did not go through. Call or email ENJ Metal Roofing instead."
+  noindex
+  actionBar={false}
+>
+  <section class="bg-ink text-paper">
+    <div class="container-page grid gap-14 pb-(--spacing-section) pt-16 sm:pt-24 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-end lg:gap-20">
+      <div>
+        <p class="label text-crimson">Not sent</p>
+        <h1 class="t-display mt-7 max-w-[14ch] text-5xl">That didn't go through</h1>
+        <p class="t-lead mt-7 max-w-[48ch] text-muted-dark">
+          Either a required field was missing or something failed on our side. Please try the form
+          again, or call or email instead.
+        </p>
+        <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+          <Button href="/contact/">Try the form again</Button>
+          <Button href={`mailto:${site.email}`} variant="secondary-dark">Email ENJ</Button>
+        </div>
+      </div>
+      <CallList />
+    </div>
+  </section>
+</Base>

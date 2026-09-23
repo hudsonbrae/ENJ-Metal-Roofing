@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://enjmetalroofing.com.au/sitemap-index.xml

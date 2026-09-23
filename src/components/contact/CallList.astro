@@ -1,0 +1,32 @@
+---
+/** John and Ethan's numbers as large tap targets. Used wherever a phone call is the fastest route. */
+import { site } from '../../data/site';
+
+interface Props {
+  tone?: 'ink' | 'paper';
+  class?: string;
+}
+
+const { tone = 'ink', class: className } = Astro.props;
+const ink = tone === 'ink';
+---
+
+<ul class:list={['border-t', ink ? 'border-line-dark' : 'border-line', className]}>
+  {
+    site.contacts.map((contact) => (
+      <li class:list={['border-b', ink ? 'border-line-dark' : 'border-line']}>
+        <a href={`tel:${contact.phone}`} class="group flex items-baseline justify-between gap-6 py-5">
+          <span class:list={['label', ink ? 'text-muted-dark' : 'text-muted']}>Call {contact.name}</span>
+          <span
+            class:list={[
+              't-title tabular text-2xl transition-colors',
+              ink ? 'group-hover:text-rose' : 'group-hover:text-red',
+            ]}
+          >
+            {contact.display}
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>

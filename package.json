@@ -6,9 +6,14 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
+    "dev": "astro dev --background",
+    "dev:launch": "astro dev --background --mode launch",
+    "dev:stop": "astro dev stop",
+    "build": "astro build && node scripts/check-launch-build.mjs",
+    "build:review": "astro build --mode review",
+    "preview": "node ./dist/server/entry.mjs",
+    "assets:brand": "node scripts/brand-assets.mjs src/assets/brand/enj-logo-source.png",
+    "assets:fixtures": "node scripts/make-fixtures.mjs",
     "astro": "astro"
   },
   "dependencies": {

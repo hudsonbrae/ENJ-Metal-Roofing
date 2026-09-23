@@ -69,7 +69,7 @@ class ResendTransport implements LeadTransport {
         from: this.from,
         to: [this.to],
         reply_to: lead.email || undefined,
-        subject: `Roofing enquiry — ${lead.name}, ${lead.suburb}`,
+        subject: `Roofing enquiry: ${lead.name}, ${lead.suburb}`,
         text: formatLead(lead),
       }),
     });
