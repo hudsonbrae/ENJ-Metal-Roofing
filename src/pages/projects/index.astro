@@ -4,13 +4,15 @@ import PageHeader from '../../components/layout/PageHeader.astro';
 import ProjectCard from '../../components/projects/ProjectCard.astro';
 import AssetSlot from '../../components/media/AssetSlot.astro';
 import Button from '../../components/primitives/Button.astro';
-import { getProjects } from '../../lib/content';
+import Gallery from '../../components/projects/Gallery.astro';
+import { getProjects, getWorkmanship } from '../../lib/content';
 import { breadcrumbSchema } from '../../lib/seo/schema';
 import { site } from '../../data/site';
 import { quoteHref } from '../../data/navigation';
 
 const projects = await getProjects();
 const [lead, ...rest] = projects;
+const workmanship = (await getWorkmanship()).map((item) => item.data);
 
 const schemas = [
   breadcrumbSchema([
@@ -28,7 +30,7 @@ const schemas = [
   <PageHeader
     tone="paper"
     title="Our work"
-    intro="Completed roofs, photographed closely enough to judge the workmanship."
+    intro="ENJ's own roofs, photographed on the job. No stock images."
     trail={[{ label: 'Work', href: '/projects/' }]}
   />
 
@@ -72,4 +74,21 @@ const schemas = [
       }
     </div>
   </section>
+
+  {
+    workmanship.length > 0 && (
+      <section class="border-t border-line bg-paper py-(--spacing-section)">
+        <div class="container-page">
+          <h2 class="t-headline text-4xl">Up close</h2>
+          <p class="t-lead mt-5 max-w-[52ch] text-muted">
+            Flashings, cappings and junctions from other ENJ jobs. These are the details that decide
+            how well a roof keeps water out.
+          </p>
+          <div class="mt-12">
+            <Gallery photos={workmanship} id="gallery-workmanship" uniform />
+          </div>
+        </div>
+      </section>
+    )
+  }
 </Base>

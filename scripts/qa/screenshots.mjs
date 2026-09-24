@@ -15,7 +15,7 @@ const pages = [
   ['services', '/services/'],
   ['service', '/services/re-roofing/'],
   ['work', '/projects/'],
-  ['project', '/projects/fixture-full-record/'],
+  ['project', '/projects/rural-hip-roof/'],
   ['about', '/about/'],
   ['contact', '/contact/'],
   ['thanks', '/contact/thank-you/'],

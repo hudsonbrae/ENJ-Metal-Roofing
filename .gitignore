@@ -27,3 +27,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Photo intake archives (originals live outside the repo)
+*.zip

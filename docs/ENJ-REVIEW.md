@@ -29,20 +29,19 @@ confirmed. Nothing here is filled in with a guess.
 
 ## Photography
 
-Add each job as a project (see `src/content/projects/_TEMPLATE.md.txt`).
-The most useful shots, in order:
+The first 19 photos are on the site: three projects plus eight workmanship
+close-ups. See [PHOTO-AUDIT.md](PHOTO-AUDIT.md) for what went where and what
+is still missing. For each project, ENJ to confirm:
 
-1. A finished roof from ground level or low drone, with the house in view
-   (homepage hero and project lead)
-2. Close-ups of ridge capping, a valley or flashing, and a run of fasteners
-   (homepage "Where roofs fail")
-3. A before and after from the same spot
-4. Work underway, with sheets going on
-5. John and Ethan on site (About page); a real photo, no stock
+| Project | Confirm |
+| --- | --- |
+| Rural hip roof | The two photos are the same job; suburb, year, roof profile and colour if happy to share |
+| Suburban home | Same as above |
+| New home in a housing estate | Same as above; whether it can be described as a new build |
 
-Once the first real project is added, the development fixtures stop leading
-the homepage automatically; they remain in review mode below real work
-until removed from `src/fixtures/projects`.
+Also: permission to show each property (the photos are aerial and some
+show neighbouring homes), and whether the worker visible in the
+bushland photo is happy to appear.
 
 ## Optional
 

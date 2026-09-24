@@ -100,6 +100,25 @@ const projectFixtures = defineCollection({
   schema: projectSchema,
 });
 
+/**
+ * Real ENJ photos that are not part of a documented project: a strong
+ * detail shot, or a job with only one photo. Captions describe only what is
+ * visible. Used for the homepage hero and detail section, and the Work page.
+ */
+const workmanship = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/workmanship' }),
+  schema: ({ image }) =>
+    photo(image).extend({
+      /** detail: close-up of a junction, flashing or fixing. wide: a roof in context. */
+      kind: z.enum(['detail', 'wide', 'during']).default('detail'),
+      /** Use as the homepage hero. Only one should be set. */
+      hero: z.boolean().default(false),
+      /** Crop anchor for tight crops, e.g. "50% 40%". */
+      focus: z.string().optional(),
+      order: z.number().default(100),
+    }),
+});
+
 const services = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/services' }),
   schema: ({ image }) =>
@@ -162,4 +181,4 @@ const faqs = defineCollection({
   }),
 });
 
-export const collections = { projects, projectFixtures, services, testimonials, serviceAreas, faqs };
+export const collections = { projects, projectFixtures, workmanship, services, testimonials, serviceAreas, faqs };

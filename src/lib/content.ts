@@ -1,8 +1,18 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
-import { reviewMode } from './mode';
+import { fixturesRequested, reviewMode } from './mode';
 
 /* The only place pages read content from. It applies the review/launch
    rules in one spot: fixtures and drafts appear in review mode only. */
+
+/** Stand-alone workmanship photos: real ENJ work not grouped into a project. */
+export async function getWorkmanship() {
+  return (await getCollection('workmanship')).sort(byOrder);
+}
+
+/** The homepage hero: the workmanship photo marked `hero`, if any. */
+export async function heroWorkmanship() {
+  return (await getWorkmanship()).find((item) => item.data.hero);
+}
 
 type ProjectEntry = CollectionEntry<'projects'> | CollectionEntry<'projectFixtures'>;
 export type ProjectData = CollectionEntry<'projects'>['data'];
@@ -26,7 +36,8 @@ function toProject(entry: ProjectEntry, isFixture: boolean): Project {
 
 export async function getProjects(): Promise<Project[]> {
   const real = (await getCollection('projects')).map((e) => toProject(e, false));
-  const fixtures = reviewMode
+  const showFixtures = reviewMode && (fixturesRequested || real.length === 0);
+  const fixtures = showFixtures
     ? (await getCollection('projectFixtures')).map((e) => toProject(e, true))
     : [];
 
@@ -47,15 +58,21 @@ export function leadPhoto(project: Project): Photo | undefined {
   return hero ?? gallery[0] ?? beforeAfter[0]?.after;
 }
 
-/** Close-up workmanship shots across all projects, for the detail section. */
-export function detailPhotos(projects: Project[], limit = 3) {
-  return projects
-    .flatMap((project) =>
-      project.data.gallery
-        .filter((photo) => photo.kind === 'detail')
-        .map((photo) => ({ photo, project })),
-    )
-    .slice(0, limit);
+/**
+ * Close-up workmanship shots for the homepage detail section: stand-alone
+ * workmanship photos marked `detail` first (they are chosen for it), then
+ * detail shots from project galleries.
+ */
+export async function detailPhotos(projects: Project[], limit = 3) {
+  const standalone = (await getWorkmanship())
+    .filter((item) => item.data.kind === 'detail' && !item.data.hero)
+    .map((item) => ({ photo: item.data as Photo, fixture: false }));
+  const fromProjects = projects.flatMap((project) =>
+    project.data.gallery
+      .filter((photo) => photo.kind === 'detail')
+      .map((photo) => ({ photo: photo as Photo, fixture: project.isFixture })),
+  );
+  return [...standalone, ...fromProjects].slice(0, limit);
 }
 
 export function projectLocation(project: Project) {

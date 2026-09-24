@@ -13,23 +13,39 @@ import { quoteHref } from '../data/navigation';
 import { processConfirmed, processSteps } from '../data/process';
 import { reviewMode } from '../lib/mode';
 import { url } from '../lib/paths';
-import { detailPhotos, getProjects, getServices, getTestimonials, leadPhoto } from '../lib/content';
+import {
+  detailPhotos,
+  getProjects,
+  getServices,
+  getTestimonials,
+  heroWorkmanship,
+  leadPhoto,
+} from '../lib/content';
 
 const projects = await getProjects();
 const services = await getServices();
 const testimonials = await getTestimonials();
+const heroShot = await heroWorkmanship();
 
 const [featured, ...otherProjects] = projects;
-const heroPhoto = featured ? leadPhoto(featured) : undefined;
 
-// The hero already shows the featured job's lead photo, so its work card
-// needs a different shot. Without one, the job goes into the index instead.
+// Hero: the workmanship photo chosen for it, otherwise the featured
+// project's lead photo.
+const heroPhoto = heroShot?.data ?? (featured ? leadPhoto(featured) : undefined);
+const heroIsFixture = !heroShot && Boolean(featured?.isFixture);
+const heroFocus = heroShot?.data.focus ?? '50% 50%';
+
+// The featured work card must not repeat the hero photo. If the hero came
+// from the project itself, use another of its shots; without one, the job
+// goes into the index instead.
 const featureShot = featured
-  ? (featured.data.gallery.find((p) => p.kind !== 'detail' && p.src !== heroPhoto?.src) ??
-    featured.data.beforeAfter[0]?.after)
+  ? heroShot
+    ? leadPhoto(featured)
+    : (featured.data.gallery.find((p) => p.kind !== 'detail' && p.src !== heroPhoto?.src) ??
+      featured.data.beforeAfter[0]?.after)
   : undefined;
 const indexProjects = featureShot ? otherProjects : projects;
-const details = detailPhotos(projects, 3);
+const details = await detailPhotos(projects, 3);
 const showProcess = processConfirmed || reviewMode;
 
 const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fasteners'];
@@ -65,7 +81,8 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
               use="hero"
               fill
               priority
-              fixture={featured?.isFixture}
+              position={heroFocus}
+              fixture={heroIsFixture}
               class="settle aspect-4/5 sm:aspect-16/10 lg:absolute lg:inset-0 lg:aspect-auto"
             />
           ) : reviewMode ? (
@@ -160,7 +177,7 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
         {
           details.length > 0 ? (
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:col-span-8 lg:col-start-5">
-              {details.map(({ photo, project }, i) => (
+              {details.map(({ photo, fixture }, i) => (
                 <figure class:list={['m-0', i === 0 && details.length > 1 && 'sm:row-span-2']}>
                   <Photo
                     src={photo.src}
@@ -168,7 +185,7 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
                     use={i === 0 ? 'card' : 'third'}
                     ratio={i === 0 && details.length > 1 ? '4/5' : '4/3'}
                     fill={false}
-                    fixture={project.isFixture}
+                    fixture={fixture}
                     reveal
                   />
                   {photo.caption && <figcaption class="mt-3 text-sm text-muted-dark">{photo.caption}</figcaption>}

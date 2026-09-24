@@ -6,9 +6,9 @@ const pages = [
   '/services/',
   '/services/re-roofing/',
   '/projects/',
-  '/projects/fixture-full-record/',
-  '/projects/fixture-portrait-minimal/',
-  '/projects/fixture-gallery-only/',
+  '/projects/rural-hip-roof/',
+  '/projects/suburban-home/',
+  '/projects/estate-new-home/',
   '/about/',
   '/contact/',
   '/contact/thank-you/',
@@ -99,7 +99,7 @@ test.describe('quote form', () => {
 });
 
 test('project gallery opens a lightbox that steps through photos', async ({ page }) => {
-  await page.goto('/projects/fixture-full-record/');
+  await page.goto('/projects/');
   await page.locator('[data-gallery] [data-open]').first().click();
   const viewer = page.getByRole('dialog', { name: 'Photo viewer' });
   await expect(viewer).toBeVisible();

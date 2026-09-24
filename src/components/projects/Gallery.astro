@@ -20,15 +20,19 @@ interface Props {
   fixture?: boolean;
   /** Unique per page, so two galleries can share a page. */
   id: string;
+  /** Crop every photo to 4:3 in an even grid (for mixed sets from different jobs). */
+  uniform?: boolean;
 }
 
-const { photos, fixture = false, id } = Astro.props;
+const { photos, fixture = false, id, uniform = false } = Astro.props;
 
 const items = await Promise.all(
   photos.map(async (photo) => {
     const large = await getImage({ src: photo.src, width: Math.min(2200, photo.src.width), format: 'webp', quality: 80 });
     const landscape = photo.src.width / photo.src.height > 1.45;
-    return { ...photo, large: large.src, span: photo.kind === 'wide' || landscape };
+    // A lone photo always spans, so it never sits beside empty space.
+    const span = !uniform && (photos.length === 1 || photo.kind === 'wide' || landscape);
+    return { ...photo, large: large.src, span };
   }),
 );
 ---
@@ -53,6 +57,7 @@ const items = await Promise.all(
                   src={item.src}
                   alt={item.alt}
                   use={item.span ? 'feature' : 'card'}
+                  ratio={uniform ? '4/3' : undefined}
                   fixture={fixture}
                   reveal
                   imgClass="transition-transform duration-700 ease-expo group-hover:scale-[1.02]"

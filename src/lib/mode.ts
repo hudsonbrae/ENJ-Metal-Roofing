@@ -15,7 +15,16 @@
  */
 const mode = import.meta.env.MODE;
 
-export const reviewMode = mode === 'review' || (import.meta.env.DEV && mode !== 'launch');
+export const reviewMode =
+  mode === 'review' || mode === 'fixtures' || (import.meta.env.DEV && mode !== 'launch');
+
+/**
+ * Synthetic development projects (src/fixtures). Now that ENJ's real work is
+ * on the site they only appear when asked for:
+ *   astro dev --mode fixtures   /   astro build --mode fixtures
+ * or automatically in review mode if there are no real projects at all.
+ */
+export const fixturesRequested = mode === 'fixtures';
 
 /**
  * The GitHub Pages test deployment: static files only, so the quote form
