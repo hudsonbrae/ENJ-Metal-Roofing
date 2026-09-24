@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
 import { z } from 'astro:content';
-import { getTransport, type Lead } from '../../lib/leads/transport';
-import { NOT_SENT, THANK_YOU } from '../../lib/leads/routes';
+import { getTransport, type Lead } from '../lib/leads/transport';
+import { NOT_SENT, THANK_YOU } from '../lib/leads/routes';
+import { url } from '../lib/paths';
 
-// The only on-demand route on the site. Everything else prerenders.
-export const prerender = false;
+// The only on-demand route on the site; everything else prerenders.
+// Registered at /api/quote by astro.config.mjs, which leaves it out of the
+// static GitHub Pages test build (there is no server there to run it).
 
 const schema = z.object({
   name: z.string().trim().min(1, 'Enter your name.').max(120),
@@ -31,12 +33,12 @@ function respond(request: Request, outcome: 'sent' | 'invalid' | 'failed', error
   if (wantsJson) {
     const status = outcome === 'sent' ? 200 : outcome === 'invalid' ? 422 : 500;
     return Response.json(
-      { ok: outcome === 'sent', redirect: outcome === 'sent' ? THANK_YOU : undefined, errors },
+      { ok: outcome === 'sent', redirect: outcome === 'sent' ? url(THANK_YOU) : undefined, errors },
       { status },
     );
   }
 
-  const location = outcome === 'sent' ? THANK_YOU : NOT_SENT;
+  const location = url(outcome === 'sent' ? THANK_YOU : NOT_SENT);
   return new Response(null, { status: 303, headers: { Location: location } });
 }
 

@@ -12,6 +12,7 @@ import { site, primaryContact } from '../data/site';
 import { quoteHref } from '../data/navigation';
 import { processConfirmed, processSteps } from '../data/process';
 import { reviewMode } from '../lib/mode';
+import { url } from '../lib/paths';
 import { detailPhotos, getProjects, getServices, getTestimonials, leadPhoto } from '../lib/content';
 
 const projects = await getProjects();
@@ -35,8 +36,8 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
 ---
 
 <Base
-  title="Metal Roofing in Ulladulla"
-  description={`Metal roofing based in ${site.base.suburb}, NSW, for coastal salt air and bushfire-prone land. Call John or Ethan, or ask for a free quote online.`}
+  title="Metal Roofing in the Shoalhaven"
+  description={`Metal roofing across ${site.base.regionPhrase}, NSW, for coastal salt air and bushfire-prone land. Call John or Ethan, or ask for a free quote online.`}
 >
   {/* Hero. Split: message and actions left, the work right. */}
   <section class="hero bg-ink text-paper">
@@ -44,7 +45,7 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
       <div class="hero-copy flex flex-col justify-center pb-14 pt-12 sm:pb-20 sm:pt-16 lg:col-span-7 lg:py-14 lg:pr-12">
         <h1 class="hero-title t-display">Roofs built for the South Coast</h1>
         <p class="t-lead mt-7 max-w-[38ch] text-muted-dark">
-          Metal roofing for salt air, coastal wind and bushfire-prone land. Based in {site.base.suburb}.
+          Metal roofing for salt air, coastal wind and bushfire-prone land, across {site.base.regionPhrase}.
         </p>
         <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Button href={quoteHref} size="lg">Get a free quote</Button>
@@ -108,7 +109,7 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
               <SectionLabel index="01" text="Work" />
               <h2 class="t-headline mt-5 text-4xl">Recent work</h2>
             </div>
-            <a href="/projects/" class="label link py-2 text-red">
+            <a href={url('/projects/')} class="label link py-2 text-red">
               All work
             </a>
           </div>
@@ -196,25 +197,28 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
           <div class="lg:col-span-4">
             <SectionLabel index="02" text="Services" />
             <h2 class="t-headline mt-5 max-w-[12ch] text-4xl">What ENJ does</h2>
-            <a href="/services/" class="label link mt-8 inline-block py-2 text-red">
+            <a href={url('/services/')} class="label link mt-8 inline-block py-2 text-red">
               All services
             </a>
+            {services.some((s) => s.data.draft) && (
+              <Awaiting
+                note="Services marked draft are shown for review. ENJ to confirm which are advertised; unconfirmed ones are hidden at launch."
+                class="mt-10"
+              >
+                <span />
+              </Awaiting>
+            )}
           </div>
           <ol class="border-t border-line lg:col-span-8">
             {services.map((service, i) => (
               <li class="border-b border-line">
-                <a href={`/services/${service.id}/`} class="group grid grid-cols-[3rem_minmax(0,1fr)] gap-x-4 py-7 sm:grid-cols-[4rem_minmax(0,1fr)]">
+                <a href={url(`/services/${service.id}/`)} class="group grid grid-cols-[3rem_minmax(0,1fr)] gap-x-4 py-7 sm:grid-cols-[4rem_minmax(0,1fr)]">
                   <span class="label tabular pt-2 text-red">{String(i + 1).padStart(2, '0')}</span>
                   <span>
                     <span class="t-title block text-2xl transition-colors group-hover:text-red lg:text-3xl">
                       {service.data.title}
                     </span>
                     <span class="mt-3 block max-w-[56ch] text-muted">{service.data.summary}</span>
-                    {service.data.draft && (
-                      <span data-review-only class="label mt-4 inline-block text-red">
-                        Draft: awaiting ENJ confirmation
-                      </span>
-                    )}
                   </span>
                 </a>
               </li>
@@ -307,7 +311,7 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
       <div class="lg:col-span-6">
         <h2 class="t-headline max-w-[14ch] text-5xl">Tell us about your roof</h2>
         <p class="t-lead mt-7 max-w-[40ch] text-muted-dark">Send the details or call directly. Quotes are free.</p>
-        <Button href={quoteHref} size="lg" class="mt-10">Get a free quote</Button>
+        <Button href={quoteHref} size="lg" class="mt-10 w-full sm:w-auto">Get a free quote</Button>
       </div>
       <CallList class="lg:col-span-5 lg:col-start-8" />
     </div>

@@ -9,6 +9,7 @@ import Base from '../../layouts/Base.astro';
 import Button from '../../components/primitives/Button.astro';
 import CallList from '../../components/contact/CallList.astro';
 import { site } from '../../data/site';
+import { staticPreview } from '../../lib/mode';
 
 const names = site.contacts.map((c) => c.name).join(' and ');
 ---
@@ -28,6 +29,13 @@ const names = site.contacts.map((c) => c.name).join(' and ');
           They'll be in touch on the number you gave to talk through the job. If it's urgent,
           a phone call is the quickest way to reach them.
         </p>
+        {
+          staticPreview && (
+            <p data-review-only class="mt-7 max-w-[48ch] border-l-2 border-crimson pl-4 text-sm text-muted-dark">
+              Test site: nothing was actually sent. This is what a customer sees after submitting.
+            </p>
+          )
+        }
       </div>
       <CallList />
     </div>

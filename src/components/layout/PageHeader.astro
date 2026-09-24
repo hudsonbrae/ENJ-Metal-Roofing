@@ -5,6 +5,8 @@
  *   aside  a named slot; when filled, the header splits into title + aside
  *          (used for calls to action and contact details, never filler text)
  */
+import { url } from '../../lib/paths';
+
 interface Props {
   title: string;
   intro?: string;
@@ -32,7 +34,7 @@ const hasAside = Astro.slots.has('aside');
         <nav aria-label="Breadcrumb" class="mb-10 sm:mb-14">
           <ol class:list={['label flex flex-wrap items-center gap-x-2', ink ? 'text-muted-dark' : 'text-muted']}>
             <li>
-              <a href="/" class="inline-block py-2 transition-colors hover:text-current">
+              <a href={url('/')} class="inline-block py-2 transition-colors hover:text-current">
                 Home
               </a>
             </li>
@@ -42,7 +44,7 @@ const hasAside = Astro.slots.has('aside');
                   /
                 </span>
                 <a
-                  href={crumb.href}
+                  href={url(crumb.href)}
                   aria-current={i === trail.length - 1 ? 'page' : undefined}
                   class="inline-block py-2 transition-colors hover:text-current"
                 >

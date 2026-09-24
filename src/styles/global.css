@@ -10,7 +10,7 @@
    (62-125%) together cover display, body and label styles. */
 @font-face {
   font-family: "Archivo";
-  src: url("/fonts/archivo-var.woff2") format("woff2-variations");
+  src: url("../assets/fonts/archivo-var.woff2") format("woff2-variations");
   font-weight: 100 900;
   font-stretch: 62% 125%;
   font-style: normal;
@@ -87,8 +87,8 @@
 
   /* Rhythm */
   --spacing-gutter: clamp(1.25rem, 5vw, 4rem);
-  --spacing-section: clamp(4.5rem, 2.5rem + 8vw, 9rem);
-  --spacing-section-lg: clamp(5.5rem, 3rem + 10vw, 11rem);
+  --spacing-section: clamp(3.75rem, 1.75rem + 8vw, 9rem);
+  --spacing-section-lg: clamp(4.5rem, 2rem + 10vw, 11rem);
   --spacing-header: 4rem;
 
   --container-page: 90rem;

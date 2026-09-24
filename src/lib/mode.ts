@@ -17,5 +17,11 @@ const mode = import.meta.env.MODE;
 
 export const reviewMode = mode === 'review' || (import.meta.env.DEV && mode !== 'launch');
 
+/**
+ * The GitHub Pages test deployment: static files only, so the quote form
+ * validates but cannot send. Set by astro.config.mjs from DEPLOY_TARGET.
+ */
+export const staticPreview = import.meta.env.STATIC_PREVIEW === 'true';
+
 /** A review build is deployed somewhere ENJ can see it, but search engines must not. */
 export const noindexSite = reviewMode && !import.meta.env.DEV;

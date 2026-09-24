@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/layout/PageHeader.astro';
 import Button from '../../components/primitives/Button.astro';
 import { getServices } from '../../lib/content';
+import { url } from '../../lib/paths';
 import { breadcrumbSchema } from '../../lib/seo/schema';
 import { site } from '../../data/site';
 import { quoteHref } from '../../data/navigation';
@@ -19,7 +20,7 @@ const schemas = [
 
 <Base
   title="Metal Roofing Services"
-  description={`Metal roofing services from ENJ Metal Roofing in ${site.base.suburb}, NSW: roof replacement, new roofs, repairs and guttering.`}
+  description={`Metal roofing services from ENJ Metal Roofing across ${site.base.regionPhrase}, NSW: roof replacement, new roofs, repairs and guttering.`}
   {schemas}
 >
   <PageHeader
@@ -36,7 +37,7 @@ const schemas = [
           <ol class="grid gap-x-10 gap-y-16 md:grid-cols-2">
             {services.map((service, i) => (
               <li class="reveal border-t-2 border-ink pt-6" style={`--d:${i % 2}`}>
-                <a href={`/services/${service.id}/`} class="group block">
+                <a href={url(`/services/${service.id}/`)} class="group block">
                   <span class="label tabular text-red">{String(i + 1).padStart(2, '0')}</span>
                   <h2 class="t-title mt-4 text-3xl transition-colors group-hover:text-red">{service.data.title}</h2>
                   <p class="mt-4 max-w-[48ch] text-muted">{service.data.summary}</p>

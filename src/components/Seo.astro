@@ -1,6 +1,7 @@
 ---
 import { site } from '../data/site';
 import { noindexSite } from '../lib/mode';
+import { url } from '../lib/paths';
 import { businessSchema, websiteSchema } from '../lib/seo/schema';
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
 const { title, description, image, noindex = false, schemas = [] } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
-const ogImage = new URL(image ?? '/brand/enj-og.jpg', Astro.site).toString();
+const ogImage = new URL(url(image ?? '/brand/enj-og.jpg'), Astro.site).toString();
 const fullTitle = `${title} | ${site.name}`;
 const robots = noindex || noindexSite ? 'noindex, nofollow' : undefined;
 
@@ -47,6 +48,6 @@ const graphs = [businessSchema(), websiteSchema(), ...schemas].filter(Boolean);
 <meta name="twitter:image" content={ogImage} />
 
 <meta name="geo.region" content="AU-NSW" />
-<meta name="geo.placename" content={site.base.suburb} />
+<meta name="geo.placename" content={`${site.base.region}, ${site.base.stateName}`} />
 
 {graphs.map((graph) => <script type="application/ld+json" set:html={JSON.stringify(graph)} />)}

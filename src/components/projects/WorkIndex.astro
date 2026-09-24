@@ -6,6 +6,7 @@
  */
 import Photo from '../media/Photo.astro';
 import { leadPhoto, projectLocation, type Project } from '../../lib/content';
+import { url } from '../../lib/paths';
 
 interface Props {
   projects: Project[];
@@ -22,7 +23,7 @@ const { projects } = Astro.props;
       return (
         <li class="work-row relative border-b border-line">
           <a
-            href={project.url}
+            href={url(project.url)}
             class="group grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-x-4 gap-y-3 py-6 sm:grid-cols-[4rem_minmax(0,1fr)_auto] sm:py-7"
           >
             <span class="label tabular text-red">{String(i + 1).padStart(2, '0')}</span>
@@ -38,8 +39,8 @@ const { projects } = Astro.props;
               )}
             </span>
             {photo && (
-              <span class="col-span-full sm:hidden">
-                <Photo src={photo.src} alt="" use="card" ratio="16/9" />
+              <span class="col-start-2 block w-36 sm:hidden">
+                <Photo src={photo.src} alt="" use="thumb" ratio="3/2" />
               </span>
             )}
           </a>

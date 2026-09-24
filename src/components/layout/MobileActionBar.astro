@@ -1,6 +1,7 @@
 ---
 import { primaryContact } from '../../data/site';
 import { quoteHref } from '../../data/navigation';
+import { url } from '../../lib/paths';
 ---
 
 {/* Measures the first 85% of the first screen from the top of the document.
@@ -18,7 +19,7 @@ import { quoteHref } from '../../data/navigation';
       <span class="label text-muted-dark">Call {primaryContact.name}</span>
       <span class="tabular text-sm font-semibold">{primaryContact.display}</span>
     </a>
-    <a href={quoteHref} class="btn btn-primary min-h-16 rounded-none">Get a free quote</a>
+    <a href={url(quoteHref)} class="btn btn-primary min-h-16 rounded-none">Get a free quote</a>
   </div>
 </div>
 

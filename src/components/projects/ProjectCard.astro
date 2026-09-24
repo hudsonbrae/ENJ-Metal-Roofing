@@ -2,6 +2,7 @@
 import Photo from '../media/Photo.astro';
 import AssetSlot from '../media/AssetSlot.astro';
 import { leadPhoto, projectLocation, formatCompleted, type Project, type Photo as PhotoType } from '../../lib/content';
+import { url } from '../../lib/paths';
 
 interface Props {
   project: Project;
@@ -37,7 +38,7 @@ const feature = size === 'feature';
   }
   <div class:list={['mt-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2', feature && 'sm:mt-7']}>
     <Heading class:list={['t-title', feature ? 'text-3xl' : 'text-2xl']}>
-      <a href={project.url} class="after:absolute after:inset-0 after:content-['']">
+      <a href={url(project.url)} class="after:absolute after:inset-0 after:content-['']">
         <span class="link">{project.data.title}</span>
       </a>
     </Heading>

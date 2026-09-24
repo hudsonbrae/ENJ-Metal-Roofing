@@ -2,6 +2,7 @@
 /** Facts about a project. Only fields with a value render; nothing is ever filled in. */
 import type { Project } from '../../lib/content';
 import { formatCompleted, getServices, projectLocation } from '../../lib/content';
+import { url } from '../../lib/paths';
 
 interface Props {
   project: Project;
@@ -45,7 +46,7 @@ const line = tone === 'ink' ? 'border-line-dark' : 'border-line';
           <dt class:list={['label', muted]}>{item.label}</dt>
           <dd class:list={['text-sm font-semibold', layout === 'row' && 'mt-2.5', layout === 'stack' && 'text-right']}>
             {item.href ? (
-              <a href={item.href} class="link link-static">
+              <a href={url(item.href)} class="link link-static">
                 {item.value}
               </a>
             ) : (

@@ -10,6 +10,8 @@
 import Button from '../primitives/Button.astro';
 import { site } from '../../data/site';
 import { QUOTE_ENDPOINT } from '../../lib/leads/routes';
+import { url } from '../../lib/paths';
+import { staticPreview } from '../../lib/mode';
 
 interface Props {
   class?: string;
@@ -32,7 +34,7 @@ const field =
   'aria-invalid:border-red';
 ---
 
-<form method="POST" action={QUOTE_ENDPOINT} data-quote-form class:list={['space-y-7', className]}>
+<form method="POST" action={url(QUOTE_ENDPOINT)} data-quote-form class:list={['space-y-7', className]}>
   {/* Spam traps: invisible to people. */}
   <div class="absolute -left-[9999px]" aria-hidden="true">
     <label for="company">Leave this empty</label>
@@ -125,10 +127,18 @@ const field =
       Fields marked <span class="text-red" aria-hidden="true">*</span><span class="sr-only">with an asterisk</span> are required.
     </p>
   </div>
+  {
+    staticPreview && (
+      <p data-review-only class="border-l-2 border-red bg-paper-2 p-4 text-sm">
+        Test site: this form checks what you enter but does not send it anywhere.
+      </p>
+    )
+  }
 </form>
 
 <script>
   import { THANK_YOU } from '../../lib/leads/routes';
+  import { url } from '../../lib/paths';
 
   const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
 
@@ -204,6 +214,13 @@ const field =
         return;
       }
 
+      // The GitHub Pages test site has no server: validate, then show the
+      // confirmation page without sending anything.
+      if (import.meta.env.STATIC_PREVIEW === 'true') {
+        window.location.assign(url(THANK_YOU));
+        return;
+      }
+
       setBusy(true);
       try {
         const response = await fetch(form.action, {
@@ -214,7 +231,7 @@ const field =
         const result = await response.json().catch(() => ({}));
 
         if (response.ok && result.ok) {
-          window.location.assign(result.redirect ?? THANK_YOU);
+          window.location.assign(result.redirect ?? url(THANK_YOU));
           return;
         }
 

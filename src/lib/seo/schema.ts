@@ -1,4 +1,4 @@
-import { site, hasAbn } from '../../data/site';
+import { site, hasAbn, owners } from '../../data/site';
 
 /**
  * Structured data for Google.
@@ -27,24 +27,23 @@ export function businessSchema() {
     image: absolute('/brand/enj-og.jpg'),
     sameAs: [site.social.instagram],
 
-    // No streetAddress: ENJ is a service-area business operating from
-    // Ulladulla rather than a shopfront. Locality and region are accurate;
-    // a fabricated street address would not be.
+    // A service-area business with no shopfront: state and country only.
+    // A guessed locality or street address would be inaccurate.
     address: {
       '@type': 'PostalAddress',
-      addressLocality: site.base.suburb,
       addressRegion: site.base.state,
-      postalCode: site.base.postcode,
       addressCountry: site.base.country,
     },
 
-    // Confirmed service area only. Expand once ENJ confirms travel radius.
+    // The region ENJ has confirmed it works in.
     areaServed: [
       {
-        '@type': 'Place',
-        name: `${site.base.suburb}, ${site.base.state}`,
+        '@type': 'AdministrativeArea',
+        name: `${site.base.region}, ${site.base.stateName}`,
       },
     ],
+
+    founder: owners.map((owner) => ({ '@type': 'Person', name: owner.name })),
 
     currenciesAccepted: 'AUD',
   };
@@ -94,7 +93,7 @@ export function serviceSchema(input: {
     url: absolute(input.url),
     serviceType: input.name,
     provider: { '@id': BUSINESS_ID },
-    areaServed: { '@type': 'Place', name: `${site.base.suburb}, ${site.base.state}` },
+    areaServed: { '@type': 'AdministrativeArea', name: `${site.base.region}, ${site.base.stateName}` },
   };
 }
 

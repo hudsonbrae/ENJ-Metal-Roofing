@@ -4,6 +4,8 @@
  * <button>. Styling lives in global.css (.btn and friends) so a plain form
  * <button> or a script can share it.
  */
+import { url } from '../../lib/paths';
+
 type Variant = 'primary' | 'secondary' | 'secondary-dark';
 type Size = 'sm' | 'md' | 'lg';
 
@@ -28,11 +30,13 @@ const {
 } = Astro.props;
 
 const classes = ['btn', `btn-${variant}`, size !== 'md' && `btn-${size}`, block && 'btn-block', className];
+// Site paths get the deploy base; tel:, mailto: and external links pass through.
+const target = href ? url(href) : undefined;
 ---
 
 {
-  href ? (
-    <a href={href} class:list={classes} {...rest}>
+  target ? (
+    <a href={target} class:list={classes} {...rest}>
       <slot />
     </a>
   ) : (

@@ -3,19 +3,20 @@ import Logo from '../brand/Logo.astro';
 import { site, hasAbn, hasLicence } from '../../data/site';
 import { primaryNav } from '../../data/navigation';
 import { getServices } from '../../lib/content';
+import { url } from '../../lib/paths';
 
 const services = await getServices();
 const year = new Date().getFullYear();
 const company = primaryNav.filter((item) => item.href !== '/services/');
 ---
 
-<footer class="bg-ink text-paper">
+<footer class="border-t border-line-dark bg-ink text-paper">
   <div class="container-page pb-10 pt-(--spacing-section)">
     <div class="grid gap-14 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_0.8fr_1.2fr] lg:gap-10">
       <div>
-        <Logo ground="dark" height={72} />
+        <Logo layout="stacked" ground="dark" height={96} class="h-24 w-auto" />
         <p class="mt-6 max-w-[32ch] text-sm leading-relaxed text-muted-dark">
-          Metal roofing, based in {site.base.suburb}, {site.base.state}.
+          Metal roofing across {site.base.regionPhrase}, {site.base.stateName}.
         </p>
         <a
           href={site.social.instagram}
@@ -43,7 +44,7 @@ const company = primaryNav.filter((item) => item.href !== '/services/');
               {services.map((service) => (
                 <li>
                   <a
-                    href={`/services/${service.id}/`}
+                    href={url(`/services/${service.id}/`)}
                     class="inline-block py-1.5 text-sm text-muted-dark transition-colors hover:text-paper"
                   >
                     {service.data.shortTitle ?? service.data.title}
@@ -63,7 +64,7 @@ const company = primaryNav.filter((item) => item.href !== '/services/');
           {
             company.map((item) => (
               <li>
-                <a href={item.href} class="inline-block py-1.5 text-sm text-muted-dark transition-colors hover:text-paper">
+                <a href={url(item.href)} class="inline-block py-1.5 text-sm text-muted-dark transition-colors hover:text-paper">
                   {item.label}
                 </a>
               </li>
@@ -106,7 +107,7 @@ const company = primaryNav.filter((item) => item.href !== '/services/');
       <div class="flex flex-wrap items-center gap-x-6 gap-y-1">
         {hasAbn && <span>ABN {site.abn}</span>}
         {hasLicence && <span>{site.licence.authority} licence {site.licence.number}</span>}
-        <a href="/privacy/" class="inline-block py-1.5 transition-colors hover:text-paper">Privacy</a>
+        <a href={url('/privacy/')} class="inline-block py-1.5 transition-colors hover:text-paper">Privacy</a>
       </div>
     </div>
   </div>

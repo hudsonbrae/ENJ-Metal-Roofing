@@ -16,7 +16,7 @@ const schemas = [
 
 <Base
   title="Get a Free Roofing Quote"
-  description={`Ask ENJ Metal Roofing in ${site.base.suburb} for a free quote. Call John or Ethan, or send the details of your roof through the form.`}
+  description={`Ask ENJ Metal Roofing for a free quote anywhere in ${site.base.regionPhrase}. Call John or Ethan, or send the details of your roof through the form.`}
   {schemas}
   actionBar={false}
 >
@@ -49,8 +49,8 @@ const schemas = [
               </dd>
             </div>
             <div class="py-5">
-              <dt class="label text-muted">Based in</dt>
-              <dd class="mt-2.5">{site.base.suburb}, {site.base.state} {site.base.postcode}</dd>
+              <dt class="label text-muted">Working across</dt>
+              <dd class="mt-2.5">{site.base.region}, {site.base.stateName}</dd>
             </div>
             <div class="py-5">
               <dt class="label text-muted">Instagram</dt>

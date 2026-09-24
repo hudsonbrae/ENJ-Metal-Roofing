@@ -3,15 +3,15 @@ import Logo from '../brand/Logo.astro';
 import Button from '../primitives/Button.astro';
 import { site, primaryContact } from '../../data/site';
 import { primaryNav, quoteHref, isCurrent } from '../../data/navigation';
+import { url } from '../../lib/paths';
 
 const path = Astro.url.pathname;
 ---
 
 <header class="sticky top-0 z-50 border-b border-line-dark bg-ink text-paper">
   <div class="container-page flex h-(--header-h) items-center justify-between gap-6">
-    <a href="/" class="-my-1 shrink-0 py-1" aria-label={`${site.name}, home`}>
-      <Logo ground="dark" height={42} priority decorative class="lg:hidden" />
-      <Logo ground="dark" height={52} priority decorative class="hidden lg:block" />
+    <a href={url('/')} class="-my-1 shrink-0 py-1" aria-label={`${site.name}, home`}>
+      <Logo ground="dark" height={42} priority decorative class="h-8 w-auto lg:h-[38px] xl:h-[42px]" />
     </a>
 
     <nav class="hidden lg:block" aria-label="Primary">
@@ -22,7 +22,7 @@ const path = Astro.url.pathname;
             return (
               <li>
                 <a
-                  href={item.href}
+                  href={url(item.href)}
                   aria-current={current ? 'page' : undefined}
                   class:list={[
                     'label relative block py-3 transition-colors duration-200 hover:text-paper',
@@ -46,7 +46,10 @@ const path = Astro.url.pathname;
     </nav>
 
     <div class="hidden items-center gap-7 lg:flex">
-      <a href={`tel:${primaryContact.phone}`} class="label tabular py-3 text-paper transition-colors hover:text-rose">
+      <a
+        href={`tel:${primaryContact.phone}`}
+        class="label tabular hidden py-3 text-paper transition-colors hover:text-rose xl:inline-block"
+      >
         <span class="sr-only">Call {primaryContact.name} on </span>{primaryContact.display}
       </a>
       <Button href={quoteHref} size="sm">Get a free quote</Button>
@@ -58,7 +61,7 @@ const path = Astro.url.pathname;
       aria-haspopup="dialog"
       data-menu-open
     >
-      <span class="label">Menu</span>
+      <span class="label max-[400px]:sr-only">Menu</span>
       <svg width="20" height="12" viewBox="0 0 20 12" aria-hidden="true">
         <path d="M0 1h20M0 11h20" stroke="currentColor" stroke-width="1.5"></path>
       </svg>
@@ -71,7 +74,7 @@ const path = Astro.url.pathname;
 <dialog data-menu class="menu m-0 h-dvh max-h-none w-full max-w-none bg-ink p-0 text-paper" aria-label="Site menu">
   <div class="flex h-full flex-col">
     <div class="container-page flex h-(--header-h) shrink-0 items-center justify-between border-b border-line-dark">
-      <Logo ground="dark" height={42} decorative />
+      <Logo ground="dark" height={32} decorative class="h-8 w-auto" />
       <button type="button" class="-mr-2 flex min-h-11 items-center gap-3 px-2 text-paper" data-menu-close>
         <span class="label">Close</span>
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
@@ -86,7 +89,7 @@ const path = Astro.url.pathname;
           primaryNav.map((item, i) => (
             <li class="menu-item border-b border-line-dark" style={`--i:${i}`}>
               <a
-                href={item.href}
+                href={url(item.href)}
                 aria-current={isCurrent(path, item.href) ? 'page' : undefined}
                 class="flex items-baseline gap-5 py-5"
               >

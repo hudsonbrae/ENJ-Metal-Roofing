@@ -6,10 +6,8 @@ import AssetSlot from '../components/media/AssetSlot.astro';
 import CallList from '../components/contact/CallList.astro';
 import Awaiting from '../components/review/Awaiting.astro';
 import { breadcrumbSchema } from '../lib/seo/schema';
-import { site, hasLicence, hasAbn } from '../data/site';
+import { site, hasLicence, hasAbn, ownerNames } from '../data/site';
 import { quoteHref } from '../data/navigation';
-
-const names = site.contacts.map((c) => c.name).join(' or ');
 
 const schemas = [
   breadcrumbSchema([
@@ -21,13 +19,13 @@ const schemas = [
 
 <Base
   title="About ENJ"
-  description={`ENJ Metal Roofing is a metal roofing business based in ${site.base.suburb}, NSW. Talk directly to John or Ethan about your roof.`}
+  description={`ENJ Metal Roofing is a metal roofing business in ${site.base.regionPhrase}, NSW, owned by ${ownerNames}. Talk to them directly about your roof.`}
   {schemas}
 >
   <PageHeader
     tone="paper"
     title="About ENJ"
-    intro={`A metal roofing business based in ${site.base.suburb}, on the New South Wales South Coast. You'll deal directly with ${names}.`}
+    intro={`A metal roofing business in ${site.base.regionPhrase}, on the New South Wales South Coast, owned by ${ownerNames}. You deal with them directly.`}
     trail={[{ label: 'About', href: '/about/' }]}
   />
 
@@ -44,7 +42,8 @@ const schemas = [
       </div>
 
       <div class="max-w-prose space-y-16 lg:col-span-6 lg:col-start-7">
-        <Awaiting note="Confirm ENJ is happy to describe itself as a new business, and whether John and Ethan's own trade experience should be mentioned here.">
+        <Awaiting note="Confirm ENJ is happy to describe itself as a new business, and whether John and Ethan's own trade background should be mentioned here.">
+
           <div>
             <h2 class="t-headline text-3xl">A new business</h2>
             <p class="t-lead mt-6 text-muted">
@@ -70,7 +69,7 @@ const schemas = [
         <div>
           <h2 class="t-headline text-3xl">Who you'll deal with</h2>
           <p class="mt-6 text-muted">
-            Call {names} directly about your roof.
+            ENJ is owned by {ownerNames}. Call either of them directly about your roof.
           </p>
           <CallList tone="paper" class="mt-8" />
         </div>
