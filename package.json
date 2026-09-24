@@ -12,7 +12,7 @@
     "build": "astro build && node scripts/check-launch-build.mjs",
     "build:review": "astro build --mode review",
     "preview": "node ./dist/server/entry.mjs",
-    "assets:brand": "node scripts/brand-assets.mjs src/assets/brand/enj-logo-source.png",
+    "assets:brand": "node scripts/brand-assets.mjs",
     "assets:fixtures": "node scripts/make-fixtures.mjs",
     "astro": "astro"
   },

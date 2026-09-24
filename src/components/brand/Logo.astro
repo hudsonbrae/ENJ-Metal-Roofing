@@ -1,20 +1,22 @@
 ---
 /**
- * The ENJ lockup, as supplied. The single place the logo is referenced.
+ * The ENJ logo. The single place the logo files are referenced.
  *
- * The supplied artwork is a stacked PNG whose "ROOFING" line is roughly
- * 12% of its height, so it cannot be fully legible at header sizes. It is
- * rendered from pre-sized, pipeline-optimised versions at 1x/2x/3x density
- * so it is as sharp as the source allows. When ENJ supplies an SVG or a
- * horizontal lockup, swap the imports below; nothing else changes.
+ * Both lockups are vector traces of ENJ's original artwork
+ * (scripts/logo-vector.mjs), so they stay sharp at any size.
+ *   horizontal  mark beside the wordmark; used in the header, where the
+ *               stacked version's "ROOFING" line would be too small to read
+ *   stacked     the original arrangement; used where there is room for it
  */
-import { Image } from 'astro:assets';
-import onDark from '../../assets/brand/enj-logo.png';
-import onLight from '../../assets/brand/enj-logo-ink.png';
+import horizontalDark from '../../assets/brand/enj-logo-horizontal-dark.svg';
+import horizontalLight from '../../assets/brand/enj-logo-horizontal-light.svg';
+import stackedDark from '../../assets/brand/enj-logo-stacked-dark.svg';
+import stackedLight from '../../assets/brand/enj-logo-stacked-light.svg';
 import { site } from '../../data/site';
 
 interface Props {
-  /** Which ground the logo sits on. The dark-ground lockup has a white wordmark. */
+  layout?: 'horizontal' | 'stacked';
+  /** The ground the logo sits on. */
   ground?: 'dark' | 'light';
   /** Rendered height in CSS pixels. */
   height: number;
@@ -24,21 +26,29 @@ interface Props {
   class?: string;
 }
 
-const { ground = 'dark', height, priority = false, decorative = false, class: className } = Astro.props;
-const source = ground === 'dark' ? onDark : onLight;
+const {
+  layout = 'horizontal',
+  ground = 'dark',
+  height,
+  priority = false,
+  decorative = false,
+  class: className,
+} = Astro.props;
+
+const files = {
+  horizontal: { dark: horizontalDark, light: horizontalLight },
+  stacked: { dark: stackedDark, light: stackedLight },
+};
+const source = files[layout][ground];
 const width = Math.round((source.width / source.height) * height);
 ---
 
-<Image
-  src={source}
+<img
+  src={source.src}
   alt={decorative ? '' : site.name}
   width={width}
   height={height}
-  densities={[1, 2, 3]}
-  format="webp"
-  quality={92}
   loading={priority ? 'eager' : 'lazy'}
-  decoding={priority ? 'sync' : 'async'}
-  class:list={['block h-auto', className]}
-  style={`width:${width}px;max-width:100%`}
+  decoding="async"
+  class:list={['block max-w-full', className]}
 />
