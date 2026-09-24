@@ -5,10 +5,21 @@ import { site, primaryContact } from '../../data/site';
 import { primaryNav, quoteHref, isCurrent } from '../../data/navigation';
 import { url } from '../../lib/paths';
 
+interface Props {
+  /** Float over a full-bleed hero: transparent until the page scrolls. */
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
 const path = Astro.url.pathname;
 ---
 
-<header class="sticky top-0 z-50 border-b border-line-dark bg-ink text-paper">
+<header
+  data-header
+  class:list={[
+    'site-header sticky top-0 z-50 text-paper transition-[background-color,border-color] duration-300',
+    overlay ? 'is-overlay border-b border-transparent' : 'border-b border-line-dark bg-ink',
+  ]}
+>
   <div class="container-page flex h-(--header-h) items-center justify-between gap-6">
     <a href={url('/')} class="-my-1 shrink-0 py-1" aria-label={`${site.name}, home`}>
       <Logo ground="dark" height={42} priority decorative class="h-8 w-auto lg:h-[38px] xl:h-[42px]" />
@@ -121,6 +132,16 @@ const path = Astro.url.pathname;
 </dialog>
 
 <style>
+  /* Over the hero: a soft top shade keeps the nav legible on any photo.
+     Once the page scrolls past the hero, the solid ink bar returns. */
+  .site-header.is-overlay {
+    background: linear-gradient(rgb(24 5 6 / 0.55), rgb(24 5 6 / 0));
+  }
+  .site-header.is-overlay.is-solid {
+    background: var(--color-ink);
+    border-bottom-color: var(--color-line-dark);
+  }
+
   .menu {
     opacity: 0;
     transform: translateY(-0.75rem);
@@ -159,6 +180,16 @@ const path = Astro.url.pathname;
 </style>
 
 <script>
+  // Overlay header turns solid once the hero is mostly out of view.
+  const header = document.querySelector<HTMLElement>('[data-header].is-overlay');
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (header && hero && 'IntersectionObserver' in window) {
+    new IntersectionObserver(
+      ([entry]) => header.classList.toggle('is-solid', !entry.isIntersecting),
+      { rootMargin: `-${header.offsetHeight + 1}px 0px 0px 0px`, threshold: 0 },
+    ).observe(hero.querySelector('[data-hero-sentinel]') ?? hero);
+  }
+
   const dialog = document.querySelector<HTMLDialogElement>('[data-menu]');
   const opener = document.querySelector<HTMLButtonElement>('[data-menu-open]');
   const closer = document.querySelector<HTMLButtonElement>('[data-menu-close]');

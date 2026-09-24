@@ -8,9 +8,10 @@ import CallList from '../components/contact/CallList.astro';
 import ProjectCard from '../components/projects/ProjectCard.astro';
 import WorkIndex from '../components/projects/WorkIndex.astro';
 import Awaiting from '../components/review/Awaiting.astro';
-import { site, primaryContact } from '../data/site';
+import { site } from '../data/site';
 import { quoteHref } from '../data/navigation';
-import { processConfirmed, processSteps } from '../data/process';
+import { processConfirmed, processIntro, processSteps } from '../data/process';
+import { concerns, conditions } from '../data/roof-concerns';
 import { reviewMode } from '../lib/mode';
 import { url } from '../lib/paths';
 import {
@@ -35,9 +36,7 @@ const heroPhoto = heroShot?.data ?? (featured ? leadPhoto(featured) : undefined)
 const heroIsFixture = !heroShot && Boolean(featured?.isFixture);
 const heroFocus = heroShot?.data.focus ?? '50% 50%';
 
-// The featured work card must not repeat the hero photo. If the hero came
-// from the project itself, use another of its shots; without one, the job
-// goes into the index instead.
+// The featured work card must not repeat the hero photo.
 const featureShot = featured
   ? heroShot
     ? leadPhoto(featured)
@@ -48,77 +47,75 @@ const indexProjects = featureShot ? otherProjects : projects;
 const details = await detailPhotos(projects, 3);
 const showProcess = processConfirmed || reviewMode;
 
-const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fasteners'];
+// The two services offered as shortcuts in the hero, as Simmark does.
+const heroServices = services.slice(0, 2);
 ---
 
 <Base
   title="Metal Roofing in the Shoalhaven"
-  description={`Metal roofing across ${site.base.regionPhrase}, NSW, for coastal salt air and bushfire-prone land. Call John or Ethan, or ask for a free quote online.`}
+  description={`Metal roofing across ${site.base.regionPhrase}, NSW, built for salt air, coastal wind and bushfire country. Call John or Ethan, or ask for a free quote online.`}
+  overlayHeader
 >
-  {/* Hero. Split: message and actions left, the work right. */}
-  <section class="hero bg-ink text-paper">
-    <div class="grid lg:min-h-(--hero-h) lg:grid-cols-12">
-      <div class="hero-copy flex flex-col justify-center pb-14 pt-12 sm:pb-20 sm:pt-16 lg:col-span-7 lg:py-14 lg:pr-12">
-        <h1 class="hero-title t-display">Roofs built for the South Coast</h1>
-        <p class="t-lead mt-7 max-w-[38ch] text-muted-dark">
-          Metal roofing for salt air, coastal wind and bushfire-prone land, across {site.base.regionPhrase}.
-        </p>
-        <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <Button href={quoteHref} size="lg">Get a free quote</Button>
-          <Button href={`tel:${primaryContact.phone}`} variant="secondary-dark" size="lg">
-            <span>Call {primaryContact.name}</span>
-            <span class="tabular font-normal opacity-80">{primaryContact.display}</span>
-          </Button>
-        </div>
-      </div>
+  {/* Hero. Full-bleed photo of ENJ's work, text over it. */}
+  <section data-hero class="hero relative flex items-end overflow-hidden bg-ink text-paper">
+    <div class="absolute inset-0">
+      {
+        heroPhoto ? (
+          <Photo
+            src={heroPhoto.src}
+            alt={heroPhoto.alt}
+            use="full"
+            fill
+            priority
+            position={heroFocus}
+            fixture={heroIsFixture}
+            class="settle"
+          />
+        ) : (
+          reviewMode && <AssetSlot role="Hero" fill brief="A finished ENJ roof, full width." />
+        )
+      }
+    </div>
+    <div class="hero-shade pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <span data-hero-sentinel class="pointer-events-none absolute inset-x-0 top-0 h-[60%]" aria-hidden="true"></span>
 
-      <div class="relative lg:col-span-5">
+    <div class="container-page relative pb-12 pt-36 sm:pb-24 sm:pt-40 lg:pb-28">
+      <p class="hero-in label text-paper/80" style="--d:0">Metal roofing across {site.base.regionPhrase}</p>
+      <h1 class="hero-in hero-title mt-6 max-w-[12ch] sm:max-w-[16ch]" style="--d:1">Your home, covered properly.</h1>
+      <p class="hero-in t-lead mt-7 max-w-[44ch] text-paper/85" style="--d:2">
+        Metal roofing built for salt air, coastal wind and bushfire country.
+      </p>
+      <div class="hero-in mt-10 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap" style="--d:3">
+        <div class="col-span-2 grid sm:contents">
+          <Button href={quoteHref} size="lg">Get a free quote</Button>
+        </div>
         {
-          heroPhoto ? (
-            <Photo
-              src={heroPhoto.src}
-              alt={heroPhoto.alt}
-              use="hero"
-              fill
-              priority
-              position={heroFocus}
-              fixture={heroIsFixture}
-              class="settle aspect-4/5 sm:aspect-16/10 lg:absolute lg:inset-0 lg:aspect-auto"
-            />
-          ) : reviewMode ? (
-            <AssetSlot
-              role="Hero"
-              fill
-              class="aspect-4/5 sm:aspect-16/10 lg:absolute lg:inset-0 lg:aspect-auto"
-              brief="A completed ENJ roof, ground level or low drone, with the house in context and light raking across the ribs."
-            />
-          ) : (
-            <div class="flex h-full flex-col justify-end px-gutter pb-14 lg:border-l lg:border-line-dark lg:px-12 lg:pb-14">
-              <CallList />
-            </div>
-          )
+          heroServices.map((service) => (
+            <a href={url(`/services/${service.id}/`)} class="btn btn-lg btn-glass max-sm:px-3">
+              {service.data.shortTitle ?? service.data.title}
+            </a>
+          ))
         }
       </div>
     </div>
   </section>
 
-  {/* Statement. Editorial, no label: the one idea the site is built on. */}
+  {/* Statement. */}
   <section class="bg-paper py-(--spacing-section-lg)">
     <div class="container-page grid gap-10 lg:grid-cols-12">
       <h2 class="reveal t-headline text-4xl lg:col-span-9">
         A roof takes more weather than any other part of a house, and gets looked at the least.
       </h2>
       <p class="reveal t-lead text-muted lg:col-span-5 lg:col-start-6" style="--d:1">
-        Near the coast, how long a metal roof lasts depends on choices made before any work starts: the
-        grade of steel, the fasteners and how the flashings are detailed. They are worth asking about
-        before accepting a quote.
+        Near the coast, how long a metal roof lasts comes down to choices made before any work starts:
+        the grade of steel, the screws, and how the flashings are finished.
       </p>
     </div>
   </section>
 
-  {/* Work. A feature image leads; the rest sit in a numbered index. */}
+  {/* Recent work. */}
   {
-    featured ? (
+    featured && (
       <section class="bg-paper pb-(--spacing-section)">
         <div class="container-page">
           <div class="mb-10 flex flex-wrap items-end justify-between gap-6">
@@ -138,75 +135,56 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
           )}
         </div>
       </section>
-    ) : (
-      <section class="bg-paper pb-(--spacing-section)">
-        <div class="container-page flex flex-col gap-6 border-y border-line py-8 sm:flex-row sm:items-center sm:justify-between">
-          <p class="t-title text-xl">
-            Project photographs are on their way. Recent jobs are on Instagram in the meantime.
-          </p>
-          <Button href={site.social.instagram} variant="secondary" target="_blank" rel="me noopener">
-            {site.social.instagramHandle}
-          </Button>
-        </div>
-      </section>
     )
   }
 
-  {/* Detail. Where roofs fail, shown up close. */}
+  {/* Worried about your roof? Signs worth acting on, next to real close-ups. */}
   <section class="bg-ink py-(--spacing-section) text-paper">
-    <div class="container-page">
-      <div class="grid gap-12 lg:grid-cols-12 lg:gap-8">
-        <div class="lg:col-span-4">
-          <h2 class="reveal t-headline text-4xl">Where roofs fail</h2>
-          <p class="reveal t-lead mt-6 text-muted-dark" style="--d:1">
-            Most leaks in a metal roof start at a junction, not in the middle of a sheet. These are the
-            details worth looking at closely.
-          </p>
-          <ul class="mt-10 border-t border-line-dark">
-            {
-              junctions.map((item, i) => (
-                <li class="reveal flex items-baseline gap-4 border-b border-line-dark py-3.5" style={`--d:${i + 2}`}>
+    <div class="container-page grid gap-14 lg:grid-cols-12 lg:gap-8">
+      <div class="lg:col-span-5">
+        <h2 class="reveal t-headline text-4xl">Worried about your roof?</h2>
+        <p class="reveal t-lead mt-6 max-w-[40ch] text-muted-dark" style="--d:1">
+          Most roof problems start small and out of sight. These are the ones worth catching early.
+        </p>
+        <ul class="mt-10 border-t border-line-dark">
+          {
+            concerns.map((item, i) => (
+              <li class="reveal border-b border-line-dark py-5" style={`--d:${i + 1}`}>
+                <h3 class="t-title flex items-baseline gap-4 text-xl">
                   <span class="label tabular text-crimson">{String(i + 1).padStart(2, '0')}</span>
-                  <span>{item}</span>
-                </li>
-              ))
-            }
-          </ul>
+                  {item.title}
+                </h3>
+                <p class="mt-2 pl-10 text-muted-dark">{item.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="reveal mt-10 flex flex-col gap-3 sm:flex-row" style="--d:6">
+          <Button href={quoteHref} size="lg">Get your roof checked</Button>
         </div>
-
-        {
-          details.length > 0 ? (
-            <div class="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:col-span-8 lg:col-start-5">
-              {details.map(({ photo, fixture }, i) => (
-                <figure class:list={['m-0', i === 0 && details.length > 1 && 'sm:row-span-2']}>
-                  <Photo
-                    src={photo.src}
-                    alt={photo.alt}
-                    use={i === 0 ? 'card' : 'third'}
-                    ratio={i === 0 && details.length > 1 ? '4/5' : '4/3'}
-                    fill={false}
-                    fixture={fixture}
-                    reveal
-                  />
-                  {photo.caption && <figcaption class="mt-3 text-sm text-muted-dark">{photo.caption}</figcaption>}
-                </figure>
-              ))}
-            </div>
-          ) : (
-            reviewMode && (
-              <div class="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:col-span-8 lg:col-start-5">
-                <AssetSlot role="Detail" ratio="4/5" class="sm:row-span-2" brief="Close-up of ridge capping meeting the sheet ends, showing the fastener line." />
-                <AssetSlot role="Detail" ratio="4/3" brief="Close-up of a valley or apron flashing." />
-                <AssetSlot role="Detail" ratio="4/3" brief="A straight run of fasteners along the ribs, shot along the roof plane." />
-              </div>
-            )
-          )
-        }
       </div>
+
+      {
+        details.length > 0 && (
+          <div class="grid content-start gap-4 sm:grid-cols-2 sm:gap-5 lg:col-span-6 lg:col-start-7">
+            {details.map(({ photo, fixture }, i) => (
+              <Photo
+                src={photo.src}
+                alt={photo.alt}
+                use={i === 0 ? 'card' : 'third'}
+                ratio={i === 0 && details.length > 1 ? '4/5' : '4/3'}
+                fixture={fixture}
+                reveal
+                class:list={[i === 0 && details.length > 1 && 'sm:row-span-2']}
+              />
+            ))}
+          </div>
+        )
+      }
     </div>
   </section>
 
-  {/* Services. The numbered index is the site's signature list. */}
+  {/* Services. */}
   {
     services.length > 0 && (
       <section class="bg-paper py-(--spacing-section)">
@@ -229,7 +207,10 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
           <ol class="border-t border-line lg:col-span-8">
             {services.map((service, i) => (
               <li class="border-b border-line">
-                <a href={url(`/services/${service.id}/`)} class="group grid grid-cols-[3rem_minmax(0,1fr)] gap-x-4 py-7 sm:grid-cols-[4rem_minmax(0,1fr)]">
+                <a
+                  href={url(`/services/${service.id}/`)}
+                  class="group grid grid-cols-[3rem_minmax(0,1fr)] gap-x-4 py-7 sm:grid-cols-[4rem_minmax(0,1fr)]"
+                >
                   <span class="label tabular pt-2 text-red">{String(i + 1).padStart(2, '0')}</span>
                   <span>
                     <span class="t-title block text-2xl transition-colors group-hover:text-red lg:text-3xl">
@@ -246,51 +227,59 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
     )
   }
 
-  {/* Local conditions. Two conditions, side by side. */}
+  {/* Roofs that last. What the roof has to stand up to here. */}
   <section class="bg-paper-2 py-(--spacing-section)">
-    <div class="container-page">
-      <h2 class="reveal t-headline max-w-[18ch] text-4xl">Specified for where the roof is going</h2>
-      <div class="mt-14 grid gap-12 md:grid-cols-2 md:gap-16">
-        <article class="reveal border-t-2 border-ink pt-6">
-          <h3 class="t-title text-2xl">Salt air</h3>
-          <p class="mt-4 max-w-[52ch] text-muted">
-            BlueScope specifies different COLORBOND&reg; steel grades by distance from breaking surf.
-            Standard COLORBOND&reg; steel is not recommended for severe marine environments, where
-            COLORBOND&reg; Ultra is the specified product. Whether a roof is washed by rain matters too:
-            sheltered areas keep salt that rain never rinses off.
-          </p>
-        </article>
-        <article class="reveal border-t-2 border-ink pt-6" style="--d:1">
-          <h3 class="t-title text-2xl">Bushfire-prone land</h3>
-          <p class="mt-4 max-w-[52ch] text-muted">
-            Much of the {site.base.region} is mapped as bushfire prone. Where a Bushfire Attack Level
-            applies, AS&nbsp;3959 sets requirements for sealing ridges and eaves against embers and for
-            gutter and valley materials. Metal sheeting is non-combustible, one reason it is common here.
-          </p>
-        </article>
+    <div class="container-page grid gap-12 lg:grid-cols-12 lg:gap-8">
+      <div class="lg:col-span-4">
+        <p class="reveal label text-red">Looking out for your home</p>
+        <h2 class="reveal t-headline mt-5 text-5xl" style="--d:1">Roofs that last</h2>
+        <p class="reveal t-lead mt-6 max-w-[34ch] text-muted" style="--d:2">
+          We help you choose the right roof for where you live.
+        </p>
       </div>
+      <ul class="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:col-span-7 lg:col-start-6">
+        {
+          conditions.map((item, i) => (
+            <li class="reveal" style={`--d:${i}`}>
+              <span class="reveal-rule block h-0.5 w-10 bg-red" style={`--d:${i}`} aria-hidden="true" />
+              <h3 class="t-title mt-5 text-2xl">{item.title}</h3>
+              <p class="mt-3 max-w-[40ch] text-muted">{item.body}</p>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
-  {/* Process. A horizontal sequence; confirmed by ENJ before it goes live. */}
+  {/* Process. Brand-colour band with numbered steps joined by arrows. */}
   {
     showProcess && (
-      <section class="bg-paper py-(--spacing-section)">
+      <section class="process bg-red py-(--spacing-section) text-paper">
         <div class="container-page">
-          <SectionLabel index="03" text="Process" />
-          <h2 class="t-headline mt-5 text-4xl">How a job runs</h2>
+          <p class="reveal label text-paper/75">The process</p>
+          <h2 class="reveal t-headline mt-5 max-w-[20ch] text-4xl" style="--d:1">
+            {processIntro.title}
+          </h2>
+          <p class="reveal t-lead mt-5 max-w-[52ch] text-paper/85" style="--d:2">
+            {processIntro.lead}
+          </p>
           <Awaiting
             when={!processConfirmed}
+            tone="brand"
             note="Confirm these steps describe how ENJ runs a job. Hidden at launch until confirmed."
-            class="mt-12"
+            class="mt-14"
           >
-            <ol class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            <ol class="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
               {processSteps.map((step, i) => (
-                <li class="relative">
-                  <span class="reveal-rule block h-px w-full bg-ink" style={`--d:${i}`} />
-                  <span class="label tabular mt-5 block text-red">{String(i + 1).padStart(2, '0')}</span>
-                  <h3 class="t-title mt-4 text-xl">{step.title}</h3>
-                  <p class="mt-3 text-muted">{step.body}</p>
+                <li class="reveal relative" style={`--d:${i}`}>
+                  <div class="flex items-center gap-4">
+                    <span class="process-num tabular">{i + 1}</span>
+                    {i < processSteps.length - 1 && (
+                      <span class="process-arrow hidden flex-1 lg:block" aria-hidden="true" />
+                    )}
+                  </div>
+                  <h3 class="t-title mt-6 text-xl">{step.title}</h3>
+                  <p class="mt-3 text-sm leading-relaxed text-paper/85">{step.body}</p>
                 </li>
               ))}
             </ol>
@@ -326,8 +315,11 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
   <section class="bg-ink py-(--spacing-section-lg) text-paper">
     <div class="container-page grid gap-14 lg:grid-cols-12 lg:items-end lg:gap-8">
       <div class="lg:col-span-6">
-        <h2 class="t-headline max-w-[14ch] text-5xl">Tell us about your roof</h2>
-        <p class="t-lead mt-7 max-w-[40ch] text-muted-dark">Send the details or call directly. Quotes are free.</p>
+        <p class="reveal label text-crimson">Let's talk</p>
+        <h2 class="reveal t-headline mt-5 max-w-[14ch] text-5xl" style="--d:1">Tell us about your roof</h2>
+        <p class="reveal t-lead mt-7 max-w-[40ch] text-muted-dark" style="--d:2">
+          Send the details or call directly. Quotes are free.
+        </p>
         <Button href={quoteHref} size="lg" class="mt-10 w-full sm:w-auto">Get a free quote</Button>
       </div>
       <CallList class="lg:col-span-5 lg:col-start-8" />
@@ -336,19 +328,73 @@ const junctions = ['Ridge capping', 'Valleys', 'Flashings', 'Penetrations', 'Fas
 </Base>
 
 <style>
+  /* Pulled up under the sticky header so the photo runs to the top edge. */
   .hero {
-    --hero-h: clamp(34rem, calc(100svh - var(--header-h)), 54rem);
+    margin-top: calc(-1 * var(--header-h));
+    min-height: clamp(38rem, 100svh, 62rem);
   }
-  /* Aligns the hero copy with the page container while the photo bleeds right. */
-  .hero-copy {
-    container-type: inline-size;
-    padding-left: max(var(--spacing-gutter), calc((100vw - var(--container-page)) / 2 + var(--spacing-gutter)));
-    padding-right: var(--spacing-gutter);
+  /* Darkens the photo enough for white text on any image: heavier at the
+     bottom-left where the text sits, lighter top-right where the work shows. */
+  .hero-shade {
+    background:
+      linear-gradient(to top, rgb(24 5 6 / 0.85) 0%, rgb(24 5 6 / 0.25) 55%, rgb(24 5 6 / 0.3) 100%),
+      linear-gradient(to right, rgb(24 5 6 / 0.55) 0%, rgb(24 5 6 / 0) 70%);
   }
-  /* Sized to the column, not the viewport. "the South Coast" measures about
-     10.5 font-sizes wide, so 9.3% of the column keeps the headline to two
-     lines at every desktop width. */
   .hero-title {
-    font-size: clamp(2.5rem, 9.3cqi, 6.25rem);
+    font-size: clamp(2.75rem, 1.4rem + 4.6vw, 6rem);
+    font-stretch: 104%;
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+
+  /* Hero copy rises in on load, after the photo starts settling. */
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+  :global(.motion-ok) .hero-in {
+    animation: hero-in 900ms var(--ease-expo) both;
+    animation-delay: calc(250ms + var(--d, 0) * 110ms);
+  }
+
+  .btn-glass {
+    border-color: rgb(255 255 255 / 0.45);
+    background: rgb(255 255 255 / 0.08);
+    color: var(--color-white);
+    backdrop-filter: blur(8px);
+  }
+  .btn-glass:hover {
+    background: var(--color-white);
+    color: var(--color-ink);
+  }
+
+  .process-num {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid rgb(255 255 255 / 0.55);
+    border-radius: 999px;
+    font-weight: 700;
+  }
+  .process-arrow {
+    position: relative;
+    height: 2px;
+    background: rgb(255 255 255 / 0.45);
+  }
+  .process-arrow::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    border-left: 12px solid rgb(255 255 255 / 0.7);
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    transform: translateY(-50%);
   }
 </style>

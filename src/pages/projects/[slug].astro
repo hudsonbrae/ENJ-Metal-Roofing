@@ -71,7 +71,6 @@ const schemas = [
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end lg:gap-20">
         <div>
           <h1 class="t-display max-w-[16ch] text-5xl">{data.title}</h1>
-          {data.summary && <p class="t-lead mt-7 max-w-[54ch] text-muted">{data.summary}</p>}
         </div>
         <ProjectMeta project={project} layout="stack" />
       </div>
@@ -83,7 +82,6 @@ const schemas = [
       <div class="bg-paper">
         <div class="container-page pt-6 sm:pt-8">
           <Photo src={hero.src} alt={hero.alt} use="full" priority fixture={project.isFixture} class="settle" />
-          {hero.caption && <p class="mt-3 text-sm text-muted">{hero.caption}</p>}
         </div>
       </div>
     )

@@ -12,5 +12,4 @@ gallery:
   - src: ./ridge-and-hips.jpg
     alt: Ridge and hip capping meeting on the same pale corrugated roof, with open farmland behind
     kind: detail
-    caption: Ridge and hip capping on the same roof
 ---

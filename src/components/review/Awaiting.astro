@@ -15,7 +15,8 @@ interface Props {
   when?: boolean;
   /** Render the note inline (for short phrases) instead of as a block. */
   inline?: boolean;
-  tone?: 'light' | 'dark';
+  /** Background it sits on: paper, ink, or the red brand band. */
+  tone?: 'light' | 'dark' | 'brand';
   class?: string;
 }
 
@@ -30,7 +31,7 @@ const Tag = inline ? 'span' : 'div';
       data-review-only
       class:list={[
         'awaiting relative outline-1 outline-offset-4 outline-dashed',
-        tone === 'dark' ? 'outline-crimson/60' : 'outline-red/45',
+        { light: 'outline-red/45', dark: 'outline-crimson/60', brand: 'outline-white/50' }[tone],
         className,
       ]}
     >
@@ -39,7 +40,7 @@ const Tag = inline ? 'span' : 'div';
         class:list={[
           'label mt-3 flex items-start gap-2 normal-case tracking-normal',
           inline && 'ml-2 mt-0 inline-flex',
-          tone === 'dark' ? 'text-crimson' : 'text-red',
+          { light: 'text-red', dark: 'text-crimson', brand: 'text-white' }[tone],
         ]}
         style="font-size:var(--text-2xs);letter-spacing:0.02em;font-stretch:100%;line-height:1.4"
       >

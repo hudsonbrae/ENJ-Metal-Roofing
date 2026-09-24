@@ -1,37 +1,110 @@
 ---
-import { primaryContact } from '../../data/site';
+import { site } from '../../data/site';
 import { quoteHref } from '../../data/navigation';
 import { url } from '../../lib/paths';
 ---
 
-{/* Measures the first 85% of the first screen from the top of the document.
-    While any of it is visible the bar stays hidden, so it never competes
-    with the page's own opening call to action. */}
+{/* Measures the first 85% of the first screen. While any of it is visible
+    the bar stays hidden, so it never competes with the page's own call to
+    action. */}
 <div data-actionbar-sentinel aria-hidden="true" class="pointer-events-none absolute left-0 top-0 h-[85svh] w-px"></div>
 
 <div
   data-actionbar
-  class="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-line-dark bg-ink text-paper transition-transform duration-300 ease-expo lg:hidden"
-  style="padding-bottom:env(safe-area-inset-bottom)"
+  class="fixed inset-x-0 bottom-0 z-40 translate-y-full text-paper transition-transform duration-300 ease-expo lg:hidden"
 >
-  <div class="grid grid-cols-2">
-    <a href={`tel:${primaryContact.phone}`} class="flex min-h-16 flex-col items-center justify-center gap-1">
-      <span class="label text-muted-dark">Call {primaryContact.name}</span>
-      <span class="tabular text-sm font-semibold">{primaryContact.display}</span>
-    </a>
+  {/* Contact options, revealed by "Contact us". */}
+  <div
+    id="contact-panel"
+    data-contact-panel
+    class="contact-panel border-t border-line-dark bg-ink-950"
+    hidden
+  >
+    <ul class="container-page divide-y divide-line-dark py-2">
+      {
+        site.contacts.map((contact) => (
+          <li>
+            <a href={`tel:${contact.phone}`} class="flex min-h-14 items-center justify-between gap-4">
+              <span class="label text-muted-dark">Call {contact.name}</span>
+              <span class="tabular text-lg font-semibold">{contact.display}</span>
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a href={`mailto:${site.email}`} class="flex min-h-14 items-center justify-between gap-4">
+          <span class="label text-muted-dark">Email</span>
+          <span class="truncate text-sm font-semibold">{site.email}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="grid grid-cols-2 border-t border-line-dark bg-ink" style="padding-bottom:env(safe-area-inset-bottom)">
+    <button
+      type="button"
+      class="flex min-h-16 items-center justify-center gap-2.5"
+      aria-expanded="false"
+      aria-controls="contact-panel"
+      data-contact-toggle
+    >
+      <span class="label">Contact us</span>
+      <svg class="contact-chevron" width="12" height="8" viewBox="0 0 12 8" aria-hidden="true">
+        <path d="M1 7l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+      </svg>
+    </button>
     <a href={url(quoteHref)} class="btn btn-primary min-h-16 rounded-none">Get a free quote</a>
   </div>
 </div>
 
+<style>
+  .contact-panel:not([hidden]) {
+    animation: panel-in 320ms var(--ease-expo);
+  }
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+  [aria-expanded='true'] .contact-chevron {
+    transform: rotate(180deg);
+  }
+  .contact-chevron {
+    transition: transform 250ms var(--ease-expo);
+  }
+</style>
+
 <script>
   const bar = document.querySelector<HTMLElement>('[data-actionbar]');
   const sentinel = document.querySelector<HTMLElement>('[data-actionbar-sentinel]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-contact-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-contact-panel]');
+
+  const setOpen = (open: boolean) => {
+    if (!toggle || !panel) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    panel.hidden = !open;
+  };
+
+  toggle?.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+  // Tapping anywhere else closes it.
+  document.addEventListener('click', (event) => {
+    if (bar && !bar.contains(event.target as Node)) setOpen(false);
+  });
 
   if (bar && sentinel && 'IntersectionObserver' in window) {
     new IntersectionObserver(([entry]) => {
       const hidden = entry.isIntersecting;
       bar.classList.toggle('translate-y-full', hidden);
       bar.inert = hidden;
+      if (hidden) setOpen(false);
     }).observe(sentinel);
   } else if (bar) {
     bar.classList.remove('translate-y-full');

@@ -75,6 +75,22 @@ test('mobile menu opens, traps focus and closes with Escape', async ({ page }) =
   await expect(opener).toBeFocused();
 });
 
+test('mobile action bar reveals every contact option', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.mouse.wheel(0, 2000);
+  const toggle = page.getByRole('button', { name: 'Contact us' });
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  const panel = page.locator('#contact-panel');
+  await expect(panel.getByRole('link', { name: /Call John/ })).toBeVisible();
+  await expect(panel.getByRole('link', { name: /Call Ethan/ })).toBeVisible();
+  await expect(panel.getByRole('link', { name: /Email/ })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(panel).toBeHidden();
+});
+
 test.describe('quote form', () => {
   test('an empty submission shows inline errors and focuses the first', async ({ page }) => {
     await page.goto('/contact/');

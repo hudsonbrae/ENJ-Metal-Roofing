@@ -17,9 +17,11 @@ interface Props {
   schemas?: unknown[];
   /** The sticky mobile call/quote bar. Off on pages that are already the quote flow. */
   actionBar?: boolean;
+  /** Page opens with a full-bleed hero the header floats over. */
+  overlayHeader?: boolean;
 }
 
-const { title, description, image, noindex, schemas, actionBar = true } = Astro.props;
+const { title, description, image, noindex, schemas, actionBar = true, overlayHeader = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -63,7 +65,7 @@ const { title, description, image, noindex, schemas, actionBar = true } = Astro.
     </a>
 
     <ReviewBanner />
-    <Header />
+    <Header overlay={overlayHeader} />
 
     <main id="main">
       <slot />

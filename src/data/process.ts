@@ -1,28 +1,36 @@
 /**
- * How a job runs, as shown on the homepage.
+ * "What happens when you get in touch": the homepage process band.
  *
- * Kept deliberately plain: it describes the order of events, not promises
- * about timing, cleanup or guarantees. ENJ has not yet confirmed that this
- * matches how they work, so `confirmed` is false and the section only
- * appears in review mode. Set it to true once ENJ signs off on the wording.
+ * ENJ has not yet confirmed that these steps match how they work, so
+ * `processConfirmed` is false and the band shows in review mode only, with an
+ * "Awaiting ENJ" note. Edit the wording, then set it to true.
  */
 export const processConfirmed = false;
+
+export const processIntro = {
+  title: 'What happens when you get in touch',
+  lead: 'From the first phone call to the finished roof, this is how a job runs.',
+};
 
 export const processSteps = [
   {
     title: 'Get in touch',
-    body: 'Call, or send the address and what needs doing through the quote form.',
+    body: "Call John or Ethan, or send the details through the website. We'll talk through what's going on with your roof and what you're after.",
   },
   {
     title: 'Roof inspection',
-    body: 'A look at the roof itself before anything is priced: its structure, pitch, condition and access.',
+    body: "We come out and look at the roof itself: its condition, pitch, structure and access. You can ask questions while we're there.",
   },
   {
     title: 'Free quote',
-    body: 'A quote for the work, covering the materials and what the job includes.',
+    body: 'You get a written quote covering the materials and what the job includes, so you know what you are agreeing to.',
   },
   {
-    title: 'The work',
-    body: 'The existing roof removed where needed and the new roof, flashings and gutters installed.',
+    title: 'Installation',
+    body: 'The old roof comes off where needed, and the new sheeting, flashings and gutters go on.',
+  },
+  {
+    title: 'Handover',
+    body: 'Before we leave, we go over the finished roof with you and answer anything you want to know.',
   },
 ] as const;
