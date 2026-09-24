@@ -35,7 +35,7 @@ export const conditions = [
   },
   {
     title: 'Coastal wind',
-    body: 'Strong gusts try to lift the sheets. Sheets need fixing to the manufacturer\'s pattern for your site\'s wind rating.',
+    body: 'Strong gusts try to lift the sheets, so they need fixing to the manufacturer\'s pattern for your site\'s wind rating.',
   },
   {
     title: 'Bushfire',
