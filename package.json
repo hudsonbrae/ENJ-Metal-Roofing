@@ -14,6 +14,9 @@
     "preview": "node ./dist/server/entry.mjs",
     "assets:brand": "node scripts/brand-assets.mjs",
     "assets:fixtures": "node scripts/make-fixtures.mjs",
+    "test": "astro build --mode review && playwright test",
+    "qa:screenshots": "node scripts/qa/screenshots.mjs",
+    "qa:crawl": "node scripts/qa/crawl.mjs",
     "astro": "astro"
   },
   "dependencies": {

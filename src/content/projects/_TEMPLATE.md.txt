@@ -1,51 +1,66 @@
 HOW TO ADD A PROJECT
-════════════════════
+====================
 
-1. Create a folder:   src/content/projects/<slug>/
-2. Put the photos in that same folder.
-3. Create index.md inside it, using the shape below.
+1. Create a folder:   src/content/projects/<project-name>/
+   Use lowercase words joined by hyphens, e.g. mollymook-re-roof.
+   It becomes the page address: /projects/mollymook-re-roof/
+2. Put that job's photos in the same folder (JPEG straight from the camera
+   or phone is fine; the site resizes and converts them).
+3. Create index.md in the folder, copying the shape below.
 
-The URL becomes /projects/<slug>/ automatically. The project appears in the
-work index, the sitemap and the structured data with no other changes.
+The project appears on the Work page, the homepage and the sitemap with no
+other changes. Photos are optimised automatically.
 
-ONLY FILL IN WHAT IS ACTUALLY KNOWN. Every field below except title, status,
-type and images is optional, and anything omitted simply does not render.
-Do not invent a suburb, year, colour or scope to fill a gap — a project page
-with fewer facts looks deliberate; a wrong fact damages trust.
+ONLY FILL IN WHAT IS ACTUALLY KNOWN. Everything except `title` is optional,
+and anything left out simply does not appear. Do not guess a suburb, date,
+colour or product to fill a gap.
 
-─────────────────────────────────────────────────────────────────────────────
+----------------------------------------------------------------------------
 
 ---
-title: Mollymook Beach Re-Roof
-status: complete              # complete | in-progress
-type: re-roof                 # re-roof | new-construction | repair |
-                              # gutters-fascia | other
-featured: true                # show on the homepage work index
-order: 1                      # lower numbers sort first
+title: Mollymook re-roof
+service: re-roofing        # re-roofing | new-roof-installation | roof-repairs | guttering-fascia
+summary: One or two factual sentences about the job.
+featured: true             # leads the homepage and the Work page
+order: 1                   # lower numbers first
 
-# ── Everything below is optional — delete any line you cannot verify ──
-suburb: Mollymook
-state: NSW
-year: 2026
-roofProfile: Trimdek
-material: COLORBOND steel
-colour: Surfmist
+# Optional facts. Delete any line you cannot confirm.
+location:
+  suburb: Mollymook
+  state: NSW
+completed: 2026-09         # YYYY or YYYY-MM
+roof:
+  profile: Trimdek
+  material: COLORBOND steel
+  colour: Surfmist
 scope:
-  - Removal of existing tile roof
+  - Removed the existing tile roof
   - New sarking and insulation
   - New gutters and downpipes
-summary: >
-  Two sentences, factual, describing what the job involved.
-  No superlatives, no claims about satisfaction or speed.
 
-images:
-  - src: ./hero.jpg
-    alt: Completed Trimdek roof in Surfmist viewed from the street
-    role: hero                # hero | wide | detail | before | during | after
-  - src: ./seam-detail.jpg
-    alt: Close view of ridge capping and sheet ends
-    role: detail
+# Photos. Every photo needs alt text describing what it shows.
+hero:                      # the main photo; landscape works best
+  src: ./front.jpg
+  alt: Finished Surfmist roof seen from the street
+gallery:
+  - src: ./aerial.jpg
+    alt: Drone view of the whole roof
+    kind: wide             # wide | detail | during
+  - src: ./ridge.jpg
+    alt: Close-up of the ridge capping
+    kind: detail           # detail photos also appear in the homepage "Where roofs fail" section
     caption: Ridge capping and sheet ends
+  - src: ./install.jpg
+    alt: New sheets going on
+    kind: during
+beforeAfter:
+  - before:
+      src: ./before.jpg
+      alt: The old tile roof before work started
+    after:
+      src: ./after.jpg
+      alt: The same view with the new metal roof
+    caption: Taken from the same spot before and after
 ---
 
-Optional longer description in markdown goes here. It is not required.
+Optional longer description, in plain paragraphs. Keep it factual.
