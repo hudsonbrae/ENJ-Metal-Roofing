@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { z } from 'astro:content';
+import { getSecret } from 'astro:env/server';
 import { getTransport, type Lead } from '../lib/leads/transport';
 import { NOT_SENT, THANK_YOU } from '../lib/leads/routes';
 import { url } from '../lib/paths';
@@ -83,7 +84,12 @@ export const POST: APIRoute = async ({ request }) => {
   };
 
   try {
-    await getTransport(import.meta.env).send(lead);
+    // Read per request: on Cloudflare the values exist only at runtime.
+    await getTransport({
+      RESEND_API_KEY: getSecret('RESEND_API_KEY'),
+      LEAD_TO_EMAIL: getSecret('LEAD_TO_EMAIL'),
+      LEAD_FROM_EMAIL: getSecret('LEAD_FROM_EMAIL'),
+    }).send(lead);
   } catch (error) {
     console.error('Quote delivery failed:', error);
     return respond(request, 'failed');

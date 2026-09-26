@@ -30,3 +30,7 @@ pnpm-debug.log*
 
 # Photo intake archives (originals live outside the repo)
 *.zip
+
+# Cloudflare local state
+.wrangler/
+.dev.vars*

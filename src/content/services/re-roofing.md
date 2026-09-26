@@ -1,6 +1,5 @@
 ---
-# DRAFT: awaiting ENJ confirmation that this service is offered and the
-# description is accurate. Set draft: false once confirmed.
+# Confirmed by ENJ: offered, and the description is accurate.
 title: Roof replacement
 shortTitle: Re-roofing
 summary: Replacing an existing tile or metal roof with new metal sheeting, including battens, insulation and flashings.
@@ -15,7 +14,7 @@ suitableFor:
   - Corroded or storm-damaged metal roofs
   - Homes being renovated or reclad
 order: 1
-draft: true
+draft: false
 ---
 
 Re-roofing replaces the whole roof covering rather than patching it. The existing tiles or

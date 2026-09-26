@@ -5,8 +5,9 @@
  * (development) to real email (production) by setting environment variables —
  * no code change, no redeploy of application logic.
  *
- * At launch: set RESEND_API_KEY and LEAD_TO_EMAIL, and verify the sending
- * domain with Resend. Until then ConsoleTransport is used automatically.
+ * At launch: set RESEND_API_KEY, LEAD_TO_EMAIL and LEAD_FROM_EMAIL on the
+ * host, and verify the sending domain with Resend. Until all three are set,
+ * ConsoleTransport is used automatically.
  */
 
 export interface Lead {

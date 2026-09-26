@@ -1,6 +1,5 @@
 ---
-# DRAFT: awaiting ENJ confirmation that this service is offered and the
-# description is accurate. Set draft: false once confirmed.
+# Confirmed by ENJ: offered, and the description is accurate.
 title: New roofs
 shortTitle: New roofs
 summary: Metal roofing for new homes, extensions, carports, sheds and outbuildings, from the frame to a finished, watertight roof.
@@ -15,7 +14,7 @@ suitableFor:
   - Extensions and second storeys
   - Carports, patios, garages and sheds
 order: 2
-draft: true
+draft: false
 ---
 
 On new work, the roof is installed to the engineer's and builder's specification. Profile, pitch,

@@ -1,6 +1,5 @@
 ---
-# DRAFT: awaiting ENJ confirmation that this service is offered and the
-# description is accurate. Set draft: false once confirmed.
+# Confirmed by ENJ: offered, and the description is accurate.
 title: Roof repairs
 shortTitle: Repairs
 summary: Finding and fixing leaks, repairing storm damage, and replacing damaged sheets and flashings on existing metal roofs.
@@ -15,7 +14,7 @@ suitableFor:
   - Storm or fallen-branch damage
   - Roofs with rust, lifting sheets or failed sealant
 order: 3
-draft: true
+draft: false
 ---
 
 Most leaks in a metal roof are not holes in the sheeting. They start at junctions (flashings,

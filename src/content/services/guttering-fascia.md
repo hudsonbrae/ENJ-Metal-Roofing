@@ -1,6 +1,5 @@
 ---
-# DRAFT: awaiting ENJ confirmation that this service is offered and the
-# description is accurate. Set draft: false once confirmed.
+# Confirmed by ENJ: offered, and the description is accurate.
 title: Gutters, fascia and downpipes
 shortTitle: Gutters
 summary: Replacing and installing gutters, fascia, downpipes and rainwater goods to suit the roof they drain.
@@ -16,7 +15,7 @@ suitableFor:
   - Properties collecting rainwater for tanks
   - Gutter replacement alongside a new roof
 order: 4
-draft: true
+draft: false
 ---
 
 Gutters are sized to the roof area they drain and the rainfall they need to handle. An undersized

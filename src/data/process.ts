@@ -1,11 +1,10 @@
 /**
  * "What happens when you get in touch": the homepage process band.
  *
- * ENJ has not yet confirmed that these steps match how they work, so
- * `processConfirmed` is false and the band shows in review mode only, with an
- * "Awaiting ENJ" note. Edit the wording, then set it to true.
+ * ENJ has confirmed these steps match how they work, so the band shows in
+ * every build. Set `processConfirmed` back to false to hide it again.
  */
-export const processConfirmed = false;
+export const processConfirmed = true;
 
 export const processIntro = {
   title: 'What happens when you get in touch',

@@ -13,15 +13,13 @@ confirmed. Nothing here is filled in with a guess.
 - Free quotes (from the Instagram bio)
 - Logo: the supplied artwork is the only version; the site uses a vector
   trace of it, plus a horizontal version for the header
+- All four services and their descriptions, the five process steps, the
+  "A new business" wording, and the rest of the site as reviewed
 
-## Needed before launch
+## Still to supply (a later update)
 
 | Item | Where it shows | How to update |
 | --- | --- | --- |
-| Which services to advertise | Services pages, homepage, footer, quote form options | `src/content/services/*.md`: set `draft: false` on each confirmed service; delete any not offered |
-| Service descriptions are accurate | Each service page | Same files |
-| How a job runs (4 steps) | Homepage "How a job runs" | `src/data/process.ts`: edit wording, then `processConfirmed = true` |
-| "A new business" wording, and whether to mention John and Ethan's trade background | About page | `src/pages/about.astro` |
 | NSW contractor licence number | About page, footer | `src/data/site.ts` → `licence.number` |
 | ABN | About page, footer, structured data | `src/data/site.ts` → `abn` |
 | Public liability insurance | About page | `src/data/site.ts` → `insurance.publicLiability` |
