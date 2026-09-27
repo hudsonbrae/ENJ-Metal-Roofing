@@ -15,13 +15,13 @@ confirmed. Nothing here is filled in with a guess.
   trace of it, plus a horizontal version for the header
 - All four services and their descriptions, the five process steps, the
   "A new business" wording, and the rest of the site as reviewed
+- ABN 77 509 312 603 (from John), shown on the About page and in the footer
 
 ## Still to supply (a later update)
 
 | Item | Where it shows | How to update |
 | --- | --- | --- |
 | NSW contractor licence number | About page, footer | `src/data/site.ts` → `licence.number` |
-| ABN | About page, footer, structured data | `src/data/site.ts` → `abn` |
 | Public liability insurance | About page | `src/data/site.ts` → `insurance.publicLiability` |
 | Privacy policy checked | Privacy page | `src/pages/privacy.astro` |
 

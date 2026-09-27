@@ -54,11 +54,11 @@ export const site = {
     instagramHandle: '@enj.metalroofing',
   },
 
+  /** Australian Business Number, supplied by John (checksum verified). */
+  abn: '77 509 312 603',
+
   // Awaiting verified values from ENJ. Components render these only when
   // non-empty; an empty value renders nothing at all.
-
-  /** Australian Business Number, e.g. '12 345 678 901' */
-  abn: '',
 
   licence: {
     /** NSW contractor licence number */
