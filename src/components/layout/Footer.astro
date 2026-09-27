@@ -14,7 +14,9 @@ const company = primaryNav.filter((item) => item.href !== '/services/');
   <div class="container-page pb-10 pt-(--spacing-section)">
     <div class="grid gap-14 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_0.8fr_1.2fr] lg:gap-10">
       <div>
-        <Logo layout="stacked" ground="dark" height={96} class="h-24 w-auto" />
+        <a href={url('/')} class="inline-block" aria-label={`${site.name}, home`}>
+          <Logo layout="stacked" ground="dark" height={96} decorative class="h-24 w-auto" />
+        </a>
         <p class="mt-6 max-w-[32ch] text-sm leading-relaxed text-muted-dark">
           Metal roofing across {site.base.regionPhrase}, {site.base.stateName}.
         </p>

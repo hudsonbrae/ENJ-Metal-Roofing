@@ -85,7 +85,9 @@ const path = Astro.url.pathname;
 <dialog data-menu class="menu m-0 h-dvh max-h-none w-full max-w-none bg-ink p-0 text-paper" aria-label="Site menu">
   <div class="flex h-full flex-col">
     <div class="container-page flex h-(--header-h) shrink-0 items-center justify-between border-b border-line-dark">
-      <Logo ground="dark" height={32} decorative class="h-8 w-auto" />
+      <a href={url('/')} class="-my-1 py-1" aria-label={`${site.name}, home`}>
+        <Logo ground="dark" height={32} decorative class="h-8 w-auto" />
+      </a>
       <button type="button" class="-mr-2 flex min-h-11 items-center gap-3 px-2 text-paper" data-menu-close>
         <span class="label">Close</span>
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
