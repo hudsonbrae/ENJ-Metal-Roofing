@@ -32,5 +32,8 @@ export const fixturesRequested = mode === 'fixtures';
  */
 export const staticPreview = import.meta.env.STATIC_PREVIEW === 'true';
 
-/** A review build is deployed somewhere ENJ can see it, but search engines must not. */
-export const noindexSite = reviewMode && !import.meta.env.DEV;
+/**
+ * Review builds and the GitHub Pages copy are deployed where people can see
+ * them, but search engines must not: only ENJ's own domain is indexed.
+ */
+export const noindexSite = (reviewMode && !import.meta.env.DEV) || staticPreview;

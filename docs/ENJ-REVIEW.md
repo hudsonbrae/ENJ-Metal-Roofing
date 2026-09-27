@@ -23,7 +23,6 @@ confirmed. Nothing here is filled in with a guess.
 | --- | --- | --- |
 | NSW contractor licence number | About page, footer | `src/data/site.ts` → `licence.number` |
 | Public liability insurance | About page | `src/data/site.ts` → `insurance.publicLiability` |
-| Privacy policy checked | Privacy page | `src/pages/privacy.astro` |
 
 ## Photography
 

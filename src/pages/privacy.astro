@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/layout/PageHeader.astro';
-import Awaiting from '../components/review/Awaiting.astro';
 import { site } from '../data/site';
 
 // A plain-language baseline describing what the site actually does. It has
@@ -17,9 +16,6 @@ import { site } from '../data/site';
 
   <section class="bg-paper py-(--spacing-section)">
     <div class="container-page">
-      <Awaiting note="Have this policy checked (ideally by a lawyer) before launch." class="mb-12 max-w-prose">
-        <p class="text-sm text-muted">Review note only. The policy below appears in every build.</p>
-      </Awaiting>
       <div class="prose-enj max-w-prose">
           <p>This policy explains what {site.name} does with personal information collected through this website.</p>
 

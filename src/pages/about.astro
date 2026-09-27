@@ -2,12 +2,16 @@
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/layout/PageHeader.astro';
 import Button from '../components/primitives/Button.astro';
-import AssetSlot from '../components/media/AssetSlot.astro';
+import Photo from '../components/media/Photo.astro';
 import CallList from '../components/contact/CallList.astro';
-import Awaiting from '../components/review/Awaiting.astro';
 import { breadcrumbSchema } from '../lib/seo/schema';
 import { site, hasLicence, hasAbn, ownerNames } from '../data/site';
 import { quoteHref } from '../data/navigation';
+import { getWorkmanship } from '../lib/content';
+
+// A wide shot of ENJ's own work, other than the homepage hero. Swap for a
+// photo of John and Ethan on site if they supply one.
+const aboutShot = (await getWorkmanship()).find((item) => item.data.kind === 'wide' && !item.data.hero);
 
 const schemas = [
   breadcrumbSchema([
@@ -33,11 +37,9 @@ const schemas = [
     <div class="container-page grid gap-16 lg:grid-cols-12 lg:gap-8">
       <div class="lg:col-span-5">
         <div class="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
-          <AssetSlot
-            role="Team"
-            ratio="4/5"
-            brief="John and Ethan on site in work gear, with a roof behind them. A real photograph: no stock images, no AI-generated people."
-          />
+          {aboutShot && (
+            <Photo src={aboutShot.data.src} alt={aboutShot.data.alt} use="card" ratio="4/5" reveal />
+          )}
         </div>
       </div>
 
@@ -88,12 +90,7 @@ const schemas = [
               )}
             </dl>
           )
-        }
-
-        <Awaiting note="Supply the licence number and public liability insurance details. Each appears here and in the footer once added to src/data/site.ts.">
-          <p class="text-sm text-muted">Licence and insurance details will appear here.</p>
-        </Awaiting>
-      </div>
+        }      </div>
     </div>
   </section>
 

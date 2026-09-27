@@ -1,8 +1,8 @@
-# Publishes the review build to GitHub Pages on every push to main
-# (including merged pull requests), for hands-on testing while the site is
-# in development. The review build shows development fixtures and
-# "Awaiting ENJ" markers, is noindexed, and its robots.txt blocks crawlers.
-# The quote form validates but sends nothing on this static site.
+# Publishes the site to GitHub Pages on every push to main (including merged
+# pull requests), for hands-on testing. It is the launch build: ENJ signed off
+# the content, so no review markers show. It is noindexed and its robots.txt
+# blocks crawlers, so only ENJ's own domain is indexed. The quote form
+# validates but sends nothing on this static site.
 #
 # One-time setup: repository Settings > Pages > Source: GitHub Actions.
 name: Review site
@@ -35,8 +35,8 @@ jobs:
 
       - run: npm ci
 
-      - name: Build review site
-        run: npx astro build --mode review
+      - name: Build site
+        run: npx astro build
         env:
           DEPLOY_TARGET: github-pages
 
